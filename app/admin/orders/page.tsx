@@ -1,183 +1,311 @@
 "use client";
 
-import { useState } from "react";
-import { PageTitle, Pill, Toast, dangerBtn, primaryBtn } from "@/components/admin/ui";
+import { useMemo, useState } from "react";
 import { orderTotal, useAdmin } from "@/lib/admin-store";
-import { ORDER_STEPS, type OrderStatus, formatPeso } from "@/lib/data";
+import { ORDER_STEPS, type Order, type OrderStatus, formatPeso } from "@/lib/data";
 
-const LABEL: Record<OrderStatus, string> = { new: "New", confirmed: "Confirmed", packed: "Packed", shipped: "Shipped", delivered: "Delivered", cancelled: "Cancelled" };
-const NEXT_LABEL: Partial<Record<OrderStatus, string>> = { new: "Confirm order", confirmed: "Mark as packed", packed: "Mark as shipped", shipped: "Mark as delivered" };
-const PILL: Record<OrderStatus, string> = {
-  new: "bg-coral text-white",
-  confirmed: "bg-sky text-navy",
-  packed: "bg-sky-2 text-ink",
-  shipped: "bg-navy text-white",
-  delivered: "bg-[#D7F2E2] text-[#14663D]",
-  cancelled: "bg-[#E6E6E6] text-[#555]",
+// A plain, table-first view for running the shop: scan, filter, act.
+
+const LABEL: Record<OrderStatus, string> = {
+  new: "New",
+  confirmed: "Confirmed",
+  packed: "Packed",
+  shipped: "Shipped",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
 };
-const FILTERS: ("all" | OrderStatus)[] = ["all", ...ORDER_STEPS];
+
+const NEXT_ACTION: Partial<Record<OrderStatus, string>> = {
+  new: "Confirm order",
+  confirmed: "Mark as packed",
+  packed: "Mark as shipped",
+  shipped: "Mark as delivered",
+};
+
+const BADGE: Record<OrderStatus, { box: string; dot: string }> = {
+  new: { box: "bg-[#FDECEC] text-[#A11410]", dot: "bg-[#E5100C]" },
+  confirmed: { box: "bg-[#EAF0FB] text-[#1F3F86]", dot: "bg-[#3A64C8]" },
+  packed: { box: "bg-[#F1EDFB] text-[#4B2F8F]", dot: "bg-[#7A57D1]" },
+  shipped: { box: "bg-[#E6F2FB] text-[#0B5584]", dot: "bg-[#1A8FD6]" },
+  delivered: { box: "bg-[#E7F5EC] text-[#14663D]", dot: "bg-[#22A35A]" },
+  cancelled: { box: "bg-[#F0F1F3] text-[#5B6170]", dot: "bg-[#9AA0AC]" },
+};
+
+const TABS: ("all" | OrderStatus)[] = ["all", ...ORDER_STEPS, "cancelled"];
+
+function StatusBadge({ status }: { status: OrderStatus }) {
+  const b = BADGE[status];
+  return (
+    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-0.5 text-[13px] font-medium ${b.box}`}>
+      <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${b.dot}`} />
+      {LABEL[status]}
+    </span>
+  );
+}
 
 export default function OrdersPage() {
   const { orders, setOrders, products } = useAdmin();
-  const [filter, setFilter] = useState<"all" | OrderStatus>("all");
-  const [selId, setSelId] = useState(orders[0]?.id);
-  const [toast, setToast] = useState("");
+  const [tab, setTab] = useState<"all" | OrderStatus>("all");
+  const [query, setQuery] = useState("");
+  const [selId, setSelId] = useState<string | undefined>(orders[0]?.id);
+  const [notice, setNotice] = useState("");
 
   const product = (id: string) => products.find((p) => p.id === id) ?? { name: "Removed Shellie", hex: "#ccc", price: 0 };
-  const live = orders.filter((o) => o.status !== "cancelled");
-  const shown = orders.filter((o) => filter === "all" || o.status === filter);
+  const itemSummary = (o: Order) => o.items.map((it) => `${it.qty} × ${product(it.productId).name}`).join(", ");
+
+  const shown = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return orders.filter(
+      (o) =>
+        (tab === "all" || o.status === tab) &&
+        (!q || [o.id, o.name, o.city, o.phone].some((v) => v.toLowerCase().includes(q))),
+    );
+  }, [orders, tab, query]);
+
   const order = orders.find((o) => o.id === selId);
+  const live = orders.filter((o) => o.status !== "cancelled");
+  const summary = [
+    { label: "Awaiting confirmation", value: String(orders.filter((o) => o.status === "new").length) },
+    { label: "To pack or ship", value: String(orders.filter((o) => o.status === "confirmed" || o.status === "packed").length) },
+    { label: "Units sold", value: String(live.reduce((a, o) => a + o.items.reduce((b, it) => b + it.qty, 0), 0)) },
+    { label: "Gross sales", value: formatPeso(live.reduce((a, o) => a + orderTotal(o, products), 0)) },
+  ];
 
   function setStatus(id: string, status: OrderStatus) {
     setOrders((os) => os.map((o) => (o.id === id ? { ...o, status } : o)));
-    setToast(status === "cancelled" ? `${id} was cancelled.` : `${id} is now ${LABEL[status].toLowerCase()}.`);
+    setNotice(status === "cancelled" ? `Order ${id} was cancelled.` : `Order ${id} marked as ${LABEL[status].toLowerCase()}.`);
   }
-
-  const stats = [
-    { label: "New, need confirming", value: orders.filter((o) => o.status === "new").length, hot: true },
-    { label: "To pack or ship", value: orders.filter((o) => o.status === "confirmed" || o.status === "packed").length },
-    { label: "Shellies sold", value: live.reduce((a, o) => a + o.items.reduce((b, it) => b + it.qty, 0), 0) },
-    { label: "Sales", value: formatPeso(live.reduce((a, o) => a + orderTotal(o, products), 0)) },
-  ];
 
   const stepIdx = order ? ORDER_STEPS.indexOf(order.status as (typeof ORDER_STEPS)[number]) : -1;
 
   return (
-    <>
-      <Toast message={toast} />
-      <PageTitle title="Orders" intro="Confirm new orders, then move each one along as you pack and ship it." />
+    <div className="flex flex-col gap-5 text-[#1B2333]">
+      <header className="flex flex-wrap items-end justify-between gap-3 border-b border-[#DCE2EC] pb-4">
+        <div>
+          <h1 className="text-[28px] font-semibold tracking-[-0.01em] text-ink">Orders</h1>
+          <p className="mt-1 text-[15px] text-[#5B6578]">Review incoming orders and update their fulfilment status.</p>
+        </div>
+        <p className="text-sm text-[#5B6578]">{orders.length} orders in total</p>
+      </header>
 
-      <div className="rise rise-2 grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3.5">
-        {stats.map((s) => (
-          <div key={s.label} className={`rounded-[26px] p-5 ${s.hot ? "bg-coral text-white" : "bg-white"}`}>
-            <p className={`text-sm font-semibold ${s.hot ? "" : "text-muted"}`}>{s.label}</p>
-            <p key={String(s.value)} className="pop mt-1.5 font-display text-[44px] font-extrabold leading-none">{s.value}</p>
+      {notice && (
+        <p role="status" className="flex items-center justify-between gap-3 rounded-lg border border-[#B9D3F5] bg-[#EEF5FF] px-4 py-2.5 text-sm text-[#1F3F86]">
+          {notice}
+          <button type="button" onClick={() => setNotice("")} className="text-sm font-medium underline">
+            Dismiss
+          </button>
+        </p>
+      )}
+
+      <dl className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] overflow-hidden rounded-lg border border-[#DCE2EC] bg-white">
+        {summary.map((s, i) => (
+          <div key={s.label} className={`px-5 py-4 ${i > 0 ? "border-l border-[#DCE2EC]" : ""}`}>
+            <dt className="text-xs font-medium uppercase tracking-[0.06em] text-[#5B6578]">{s.label}</dt>
+            <dd className="mt-1 text-2xl font-semibold tabular-nums text-ink">{s.value}</dd>
           </div>
         ))}
-      </div>
+      </dl>
 
-      <div role="group" aria-label="Filter orders" className="rise rise-3 flex flex-wrap gap-2">
-        {FILTERS.map((f) => (
-          <button
-            key={f}
-            type="button"
-            aria-pressed={filter === f}
-            onClick={() => setFilter(f)}
-            className={`bubbly h-11 rounded-full px-4 text-[15px] font-semibold ${filter === f ? "bg-ink text-white" : "bg-white text-ink"}`}
-          >
-            {f === "all" ? "All" : LABEL[f]} · {f === "all" ? orders.length : orders.filter((o) => o.status === f).length}
-          </button>
-        ))}
-      </div>
-
-      <div className="rise rise-4 flex flex-wrap items-start gap-6">
-        <div className="flex min-w-0 flex-[999_1_480px] flex-col gap-2.5">
-          {shown.length === 0 && <p className="rounded-[22px] bg-white p-6 text-center">No orders here right now.</p>}
-          {shown.map((o) => (
-            <button
-              key={o.id}
-              type="button"
-              onClick={() => setSelId(o.id)}
-              className={`lift flex w-full flex-wrap items-center gap-x-4 gap-y-3 rounded-[22px] border-[3px] bg-white px-[18px] py-4 text-left ${o.id === selId ? "border-navy" : "border-transparent"}`}
-            >
-              <span className="flex min-w-0 flex-[1_1_200px] flex-col gap-0.5">
-                <span className="text-base font-bold">{o.name}</span>
-                <span className="text-sm text-muted">
-                  {o.id} · {o.placed} · {o.city}
-                </span>
-              </span>
-              <span className="flex gap-1" aria-label={o.items.map((it) => `${it.qty} ${product(it.productId).name}`).join(", ")}>
-                {o.items.map((it) => (
-                  <span key={it.productId} aria-hidden className="h-[22px] w-[22px] rounded-full border-[3px] border-white shadow-[0_0_0_1px_#DCE8FD]" style={{ background: product(it.productId).hex }} />
-                ))}
-              </span>
-              <span className="min-w-16 text-right font-bold">{formatPeso(orderTotal(o, products))}</span>
-              <Pill key={o.status} className={`pop min-w-24 ${PILL[o.status]}`}>{LABEL[o.status]}</Pill>
-            </button>
-          ))}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div role="tablist" aria-label="Filter by status" className="flex flex-wrap gap-1 rounded-lg border border-[#DCE2EC] bg-white p-1">
+          {TABS.map((t) => {
+            const count = t === "all" ? orders.length : orders.filter((o) => o.status === t).length;
+            const on = tab === t;
+            return (
+              <button
+                key={t}
+                type="button"
+                role="tab"
+                aria-selected={on}
+                onClick={() => setTab(t)}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${on ? "bg-ink text-white" : "text-[#3A4456] hover:bg-[#F1F4F9]"}`}
+              >
+                {t === "all" ? "All" : LABEL[t]} <span className={`tabular-nums ${on ? "text-white/70" : "text-[#8A93A5]"}`}>{count}</span>
+              </button>
+            );
+          })}
         </div>
+        <label className="relative">
+          <span className="sr-only">Search orders</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search order no., customer or city"
+            className="h-10 w-72 max-w-full rounded-lg border border-[#DCE2EC] bg-white pl-3 pr-3 text-sm placeholder:text-[#8A93A5]"
+          />
+        </label>
+      </div>
 
+      <div className="flex flex-wrap items-start gap-5">
+        {/* Orders table */}
+        <section aria-label="Orders" className="min-w-0 flex-[999_1_560px] overflow-hidden rounded-lg border border-[#DCE2EC] bg-white">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] border-collapse text-sm">
+              <thead className="bg-[#F6F8FB] text-left text-xs font-medium uppercase tracking-[0.06em] text-[#5B6578]">
+                <tr>
+                  <th scope="col" className="px-4 py-3">Order</th>
+                  <th scope="col" className="px-4 py-3">Placed</th>
+                  <th scope="col" className="px-4 py-3">Customer</th>
+                  <th scope="col" className="px-4 py-3">Items</th>
+                  <th scope="col" className="px-4 py-3">Payment</th>
+                  <th scope="col" className="px-4 py-3 text-right">Total</th>
+                  <th scope="col" className="px-4 py-3">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {shown.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-10 text-center text-[#5B6578]">
+                      No orders match this filter.
+                    </td>
+                  </tr>
+                )}
+                {shown.map((o) => {
+                  const on = o.id === selId;
+                  return (
+                    <tr
+                      key={o.id}
+                      onClick={() => setSelId(o.id)}
+                      aria-selected={on}
+                      className={`cursor-pointer border-t border-[#E8ECF2] transition-colors ${on ? "bg-[#EEF3FC]" : "hover:bg-[#F8FAFC]"}`}
+                    >
+                      <td className={`px-4 py-3 ${on ? "shadow-[inset_3px_0_0_#0040A0]" : ""}`}>
+                        <button type="button" onClick={() => setSelId(o.id)} className="font-semibold tabular-nums text-navy hover:underline">
+                          {o.id}
+                        </button>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-[#3A4456]">{o.placed}</td>
+                      <td className="px-4 py-3">
+                        <div className="font-medium">{o.name}</div>
+                        <div className="text-xs text-[#5B6578]">{o.city}</div>
+                      </td>
+                      <td className="px-4 py-3 text-[#3A4456]">{itemSummary(o)}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-[#3A4456]">{o.payment}</td>
+                      <td className="px-4 py-3 text-right font-medium tabular-nums">{formatPeso(orderTotal(o, products))}</td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={o.status} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="border-t border-[#E8ECF2] px-4 py-2.5 text-xs text-[#5B6578]">
+            Showing {shown.length} of {orders.length} orders
+          </p>
+        </section>
+
+        {/* Order details */}
         {order && (
-          <section key={order.id} aria-label="Order details" className="pop flex min-w-0 flex-[1_1_340px] flex-col gap-[18px] rounded-[32px] bg-white p-[26px]">
-            <div className="flex items-start justify-between gap-3">
+          <section aria-label={`Order ${order.id}`} className="min-w-0 flex-[1_1_340px] rounded-lg border border-[#DCE2EC] bg-white">
+            <div className="flex items-start justify-between gap-3 border-b border-[#E8ECF2] px-5 py-4">
               <div>
-                <p className="text-sm text-muted">
-                  {order.id} · {order.placed}
-                </p>
-                <h2 className="mt-1 font-display text-[30px] font-extrabold leading-[1.05] tracking-[-0.02em]">{order.name}</h2>
+                <p className="text-xs font-medium uppercase tracking-[0.06em] text-[#5B6578]">Order</p>
+                <h2 className="text-xl font-semibold tabular-nums text-ink">{order.id}</h2>
+                <p className="text-sm text-[#5B6578]">Placed {order.placed}</p>
               </div>
-              <Pill key={order.status} className={`pop ${PILL[order.status]}`}>{LABEL[order.status]}</Pill>
+              <StatusBadge status={order.status} />
             </div>
 
-            <ol className="flex gap-1.5">
+            {/* Fulfilment progress */}
+            <ol aria-label="Fulfilment progress" className="flex gap-1 border-b border-[#E8ECF2] px-5 py-4">
               {ORDER_STEPS.map((st, i) => {
                 const done = order.status !== "cancelled" && i <= stepIdx;
                 return (
-                  <li key={st} className={`flex flex-1 flex-col gap-1.5 text-xs font-semibold ${done ? "text-ink" : "text-[#6B7A99]"}`}>
-                    <span aria-hidden className={`h-2 rounded-full transition-colors duration-500 ${order.status === "cancelled" ? "bg-[#E6E6E6]" : done ? "bg-navy" : "bg-sky"}`} />
-                    {LABEL[st]}
+                  <li key={st} className="flex flex-1 flex-col gap-1.5" aria-current={i === stepIdx ? "step" : undefined}>
+                    <span aria-hidden className={`h-1 rounded-full transition-colors duration-300 ${done ? "bg-navy" : "bg-[#E1E6EE]"}`} />
+                    <span className={`text-[11px] font-medium ${done ? "text-ink" : "text-[#8A93A5]"}`}>{LABEL[st]}</span>
                   </li>
                 );
               })}
             </ol>
 
-            <dl className="flex flex-col gap-2.5 text-[15px]">
-              {[
-                ["Phone", order.phone],
-                ["Deliver to", order.address],
-                ["Payment", order.payment],
-              ].map(([k, v]) => (
-                <div key={k} className="flex justify-between gap-4">
-                  <dt className="text-muted">{k}</dt>
-                  <dd className="text-right font-semibold">{v}</dd>
-                </div>
-              ))}
+            <dl className="grid grid-cols-[110px_minmax(0,1fr)] gap-x-4 gap-y-2.5 border-b border-[#E8ECF2] px-5 py-4 text-sm">
+              <dt className="text-[#5B6578]">Customer</dt>
+              <dd className="font-medium">{order.name}</dd>
+              <dt className="text-[#5B6578]">Phone</dt>
+              <dd className="tabular-nums">{order.phone}</dd>
+              <dt className="text-[#5B6578]">Ship to</dt>
+              <dd>{order.address}</dd>
+              <dt className="text-[#5B6578]">Payment</dt>
+              <dd>{order.payment}</dd>
             </dl>
 
-            <div className="rounded-[20px] bg-ice px-4 py-1.5">
-              {order.items.map((it) => {
-                const p = product(it.productId);
-                return (
-                  <div key={it.productId} className="flex items-center gap-3 border-b-2 border-white py-2.5">
-                    <span aria-hidden className="h-[30px] w-[30px] flex-none rounded-full border-[3px] border-white" style={{ background: p.hex }} />
-                    <span className="min-w-0 flex-1 font-semibold">{p.name}</span>
-                    <span className="text-sm text-muted">
-                      {it.qty} × {formatPeso(p.price)}
-                    </span>
-                    <span className="min-w-14 text-right font-bold">{formatPeso(p.price * it.qty)}</span>
-                  </div>
-                );
-              })}
-              <div className="flex justify-between py-3 text-[17px] font-bold">
-                <span>Total</span>
-                <span>{formatPeso(orderTotal(order, products))}</span>
-              </div>
+            <div className="border-b border-[#E8ECF2] px-5 py-4">
+              <table className="w-full text-sm">
+                <caption className="mb-2 text-left text-xs font-medium uppercase tracking-[0.06em] text-[#5B6578]">Items</caption>
+                <thead className="sr-only">
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Quantity and unit price</th>
+                    <th scope="col">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.items.map((it) => {
+                    const p = product(it.productId);
+                    return (
+                      <tr key={it.productId} className="border-b border-[#F0F2F6] last:border-b-0">
+                        <td className="py-2">
+                          <span className="flex items-center gap-2">
+                            <span aria-hidden className="h-3 w-3 rounded-full ring-1 ring-black/10" style={{ background: p.hex }} />
+                            {p.name}
+                          </span>
+                        </td>
+                        <td className="py-2 text-right tabular-nums text-[#5B6578]">
+                          {it.qty} × {formatPeso(p.price)}
+                        </td>
+                        <td className="w-24 py-2 text-right font-medium tabular-nums">{formatPeso(p.price * it.qty)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t border-[#DCE2EC]">
+                    <th scope="row" colSpan={2} className="pt-3 text-left font-semibold">
+                      Total
+                    </th>
+                    <td className="pt-3 text-right font-semibold tabular-nums">{formatPeso(orderTotal(order, products))}</td>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
 
             {order.note && (
-              <p className="rounded-2xl bg-blush px-3.5 py-3 text-sm text-maroon">
-                <b>Customer note:</b> {order.note}
-              </p>
+              <div className="border-b border-[#E8ECF2] px-5 py-4 text-sm">
+                <p className="text-xs font-medium uppercase tracking-[0.06em] text-[#5B6578]">Customer note</p>
+                <p className="mt-1">{order.note}</p>
+              </div>
             )}
 
-            <div className="flex flex-wrap gap-2.5">
-              {NEXT_LABEL[order.status] && (
-                <button type="button" onClick={() => setStatus(order.id, ORDER_STEPS[stepIdx + 1])} className={`flex-[1_1_200px] ${primaryBtn}`}>
-                  {NEXT_LABEL[order.status]}
+            <div className="flex flex-wrap gap-2 px-5 py-4">
+              {NEXT_ACTION[order.status] && (
+                <button
+                  type="button"
+                  onClick={() => setStatus(order.id, ORDER_STEPS[stepIdx + 1])}
+                  className="h-10 flex-1 rounded-lg bg-navy px-4 text-sm font-semibold text-white transition-colors hover:bg-ink"
+                >
+                  {NEXT_ACTION[order.status]}
                 </button>
               )}
               {(order.status === "new" || order.status === "confirmed") && (
-                <button type="button" onClick={() => setStatus(order.id, "cancelled")} className={dangerBtn}>
+                <button
+                  type="button"
+                  onClick={() => setStatus(order.id, "cancelled")}
+                  className="h-10 rounded-lg border border-[#E3B4B2] bg-white px-4 text-sm font-semibold text-[#A11410] transition-colors hover:bg-[#FDF3F3]"
+                >
                   Cancel order
                 </button>
               )}
               {(order.status === "delivered" || order.status === "cancelled") && (
-                <p className="text-sm text-muted">This order is finished. Nothing left to do.</p>
+                <p className="text-sm text-[#5B6578]">This order is closed. No further action is needed.</p>
               )}
             </div>
           </section>
         )}
       </div>
-    </>
+    </div>
   );
 }

@@ -8,10 +8,11 @@ There is no backend yet. Everything runs on sample data in `lib/data.ts`; admin 
 
 | Route | What it is |
 |---|---|
-| `/` | Landing page with the shop and cart |
+| `/` | Landing page |
+| `/shop` | Shop and cart |
 | `/news` | Public posts from the team |
 | `/s/[tagId]` | What a finder sees after tapping a Shellie (try `/s/AB12CD` or `/s/DN67XY`) |
-| `/my-shellies` | Parents edit their Shellie and choose what to share |
+| `/account` | A shopper's account: tracks their orders from Placed to Delivered (sample shopper until login exists) |
 | `/admin/orders` | Receive orders and move them from New to Delivered |
 | `/admin/listings` | Manage Shellie listings: price, stock, color, visibility |
 | `/admin/posts` | Write, publish and delete posts |
@@ -40,5 +41,5 @@ Ready for Vercel with the default Next.js settings. No environment variables are
 ## Still to build
 
 - A backend and database for orders, listings, posts and Shellie profiles
-- Real login for parents and for the admin area (the admin pages are not protected yet)
+- Real login: shoppers sign in with Facebook or Google; the admin area needs its own login (the admin pages are not protected yet)
 - Checkout and payments

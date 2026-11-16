@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Bracelet, Crab } from "@/components/art";
+import { Crab } from "@/components/art";
+import { ProductPhoto } from "@/components/ProductPhoto";
 import { useCart } from "@/lib/cart";
 import { PRODUCTS, formatPeso } from "@/lib/data";
 
@@ -31,7 +32,7 @@ export function ShopSection() {
           <div className="relative flex min-h-[460px] min-w-0 flex-[1_1_480px] items-center justify-center overflow-hidden rounded-[40px] bg-white">
             <div key={`tint-${sel.id}`} aria-hidden className="pop absolute left-1/2 top-1/2 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ background: sel.tint }} />
             <div key={sel.id} className="pop relative flex w-[78%] max-w-[440px] justify-center">
-              <Bracelet hex={sel.hex} label={`${sel.name} Shellie`} className="bob w-full" />
+              <ProductPhoto product={sel} priority sizes="(max-width: 640px) 80vw, 440px" className={sel.image ? "shadow-[0_18px_40px_rgba(0,64,160,0.15)]" : "bob"} />
             </div>
             <div aria-hidden className="absolute bottom-0 left-9 h-[62px] w-[130px] overflow-hidden">
               <Crab className="bob block w-[130px]" />
@@ -113,7 +114,7 @@ export function ShopSection() {
             {products.map((p) => (
               <div key={p.id} role="listitem" className="lift wiggle-host flex w-[72%] flex-none snap-start flex-col items-center gap-2.5 rounded-[30px] bg-white px-[18px] py-[22px] shadow-[0_10px_30px_rgba(0,64,160,0.06)] sm:w-[42%] lg:w-[30%]">
                 <button type="button" onClick={() => setSelId(p.id)} aria-label={`View ${p.name}`} className="w-full">
-                  <Bracelet hex={p.hex} className="mx-auto w-full max-w-[180px]" />
+                  <ProductPhoto product={p} decorative className="mx-auto max-w-[180px]" />
                 </button>
                 <div className="text-xl font-bold text-[#111]">{p.name}</div>
                 <div className="flex items-center gap-2">

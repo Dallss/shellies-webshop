@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PageTitle, Pill, Toast, coralBtn, dangerBtn, inputClass, labelClass } from "@/components/admin/ui";
-import { Bracelet } from "@/components/art";
+import { ProductPhoto } from "@/components/ProductPhoto";
 import { Switch } from "@/components/Switch";
 import { useAdmin } from "@/lib/admin-store";
 import { type Product, formatPeso } from "@/lib/data";
@@ -70,7 +70,7 @@ export default function ListingsPage() {
                 onClick={() => setSelId(p.id)}
                 className={`lift wiggle-host flex flex-col items-center gap-2 rounded-[28px] border-[3px] bg-white p-[18px] ${p.id === selId ? "border-navy" : "border-transparent"} ${p.shown ? "" : "opacity-60"}`}
               >
-                <Bracelet hex={p.hex} className="w-full max-w-[150px]" />
+                <ProductPhoto product={p} decorative className="max-w-[150px]" />
                 <span className="text-[19px] font-bold">{p.name}</span>
                 <span className="text-[15px]">
                   {formatPeso(p.price)} · {p.stock} in stock
@@ -84,6 +84,50 @@ export default function ListingsPage() {
         {sel && (
           <form key={sel.id} aria-label="Edit listing" onSubmit={(e) => e.preventDefault()} className="pop flex min-w-0 flex-[1_1_340px] flex-col gap-3.5 rounded-[32px] bg-periwinkle p-[26px]">
             <h2 className="font-display text-[28px] font-extrabold tracking-[-0.02em]">Edit {sel.name}</h2>
+            <div className="flex flex-col gap-2">
+              <span className={labelClass}>Photo</span>
+              <div className="flex items-center gap-4 rounded-2xl bg-sky p-3">
+                <span key={sel.image ?? "none"} className="pop block w-24 flex-none">
+                  <ProductPhoto product={sel} decorative sizes="96px" />
+                </span>
+                <div className="flex min-w-0 flex-col gap-2">
+                  <label htmlFor="l-photo" className="bubbly inline-flex h-11 cursor-pointer items-center justify-center rounded-[14px] bg-navy px-4 text-[15px] font-bold text-white">
+                    {sel.image ? "Replace photo" : "Upload photo"}
+                  </label>
+                  <input
+                    id="l-photo"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="sr-only"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      e.target.value = "";
+                      if (!file) return;
+                      if (file.size > 5 * 1024 * 1024) {
+                        setToast("That photo is over 5 MB. Choose a smaller one.");
+                        return;
+                      }
+                      if (sel.image?.startsWith("blob:")) URL.revokeObjectURL(sel.image);
+                      patch({ image: URL.createObjectURL(file) });
+                    }}
+                  />
+                  {sel.image ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sel.image?.startsWith("blob:")) URL.revokeObjectURL(sel.image);
+                        patch({ image: undefined });
+                      }}
+                      className="text-left text-sm font-semibold text-crimson"
+                    >
+                      Remove photo
+                    </button>
+                  ) : (
+                    <span className="text-[13px] text-muted">JPG, PNG or WebP, up to 5 MB. Square photos look best.</span>
+                  )}
+                </div>
+              </div>
+            </div>
             <div className="flex flex-col gap-1.5">
               <label htmlFor="l-name" className={labelClass}>Name</label>
               <input id="l-name" value={sel.name} onChange={(e) => patch({ name: e.target.value })} className={inputClass} />

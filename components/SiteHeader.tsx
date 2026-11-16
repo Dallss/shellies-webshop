@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
+import { useSession } from "@/lib/session";
 import { BagIcon, Crab } from "./art";
 
 const LINKS = [
@@ -57,12 +58,7 @@ function HeaderBar({ blue, current }: { blue: boolean; current?: string }) {
         </nav>
 
         <div className="flex flex-wrap gap-3">
-          <Link
-            href="/my-shellies"
-            className={`bubbly inline-flex h-12 items-center rounded-2xl border-[2.5px] px-5 font-semibold no-underline ${blue ? "border-sky text-sky" : "border-red text-red"}`}
-          >
-            Log in
-          </Link>
+          <AccountButton blue={blue} current={current} />
           <Link
             href="/shop#cart"
             aria-label={`Cart, ${count} items`}
@@ -75,6 +71,41 @@ function HeaderBar({ blue, current }: { blue: boolean; current?: string }) {
           </Link>
         </div>
       </div>
+  );
+}
+
+/** Signed in: the shopper's initial and first name, linking to their orders. Signed out: Log in.
+ *  Solid fill so it stays readable over the coral and navy shapes behind the header. */
+function AccountButton({ blue, current }: { blue: boolean; current?: string }) {
+  const { status, user } = useSession();
+  const base = "bubbly inline-flex h-12 items-center gap-2.5 rounded-2xl font-semibold no-underline";
+  const tone = blue ? "bg-white/15 text-white ring-2 ring-inset ring-sky/60" : "bg-white text-navy shadow-[0_6px_20px_rgba(0,64,160,0.18)]";
+
+  if (status === "loading") {
+    return <span aria-hidden className={`${base} ${tone} invisible px-5`}>Log in</span>;
+  }
+
+  if (!user) {
+    return (
+      <Link href="/login" aria-current={current === "/login" ? "page" : undefined} className={`${base} ${tone} px-5`}>
+        Log in
+      </Link>
+    );
+  }
+
+  const first = user.name.split(" ")[0];
+  return (
+    <Link
+      href="/account"
+      aria-current={current === "/account" ? "page" : undefined}
+      aria-label={`Your account, signed in as ${user.name}`}
+      className={`${base} ${tone} pl-1.5 pr-4`}
+    >
+      <span aria-hidden className={`flex h-9 w-9 items-center justify-center rounded-xl font-display text-lg font-extrabold ${blue ? "bg-sky text-navy" : "bg-navy text-white"}`}>
+        {first[0]}
+      </span>
+      <span className="max-w-[9ch] truncate">{first}</span>
+    </Link>
   );
 }
 

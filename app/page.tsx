@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Bracelet, Crab, NfcIcon } from "@/components/art";
+import { ProductPhoto } from "@/components/ProductPhoto";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { BubbleField } from "@/components/BubbleField";
 import { PRODUCTS } from "@/lib/data";
 
 const STEPS = [
@@ -9,11 +11,11 @@ const STEPS = [
   { n: 3, title: "They reach you", body: "Your shared info opens in their browser, with one tap to call you.", card: "bg-navy text-white", badge: "bg-white text-navy", text: "text-sky" },
 ];
 
-const PREVIEW_FIELDS = [
+const PREVIEW_FIELDS: { label: string; value: string; on: boolean; demo?: boolean }[] = [
   { label: "Contact number", value: "(+63) 912 345 6789", on: true },
   { label: "Age", value: "12", on: true },
   { label: "Home address", value: "House No., Talisay, Cebu", on: true },
-  { label: "Instagram", value: "@anne.reyes", on: false },
+  { label: "Instagram", value: "@anne.reyes", on: false, demo: true },
 ];
 
 export default function Home() {
@@ -23,17 +25,35 @@ export default function Home() {
 
       {/* HERO */}
       <section id="top" className="relative mx-auto flex max-w-[1240px] flex-wrap items-center gap-12 px-6 pt-14">
-        <div aria-hidden className="float-slow absolute -right-40 -top-[200px] h-[520px] w-[520px] rounded-full bg-coral" />
-        <div aria-hidden className="float absolute left-[46%] top-0 h-[110px] w-[110px] rounded-full bg-sky" />
-        <div aria-hidden className="float-late absolute -right-[60px] top-[420px] h-[220px] w-[220px] rounded-full bg-navy" />
+        <div aria-hidden className="drift-a absolute -right-40 -top-[200px] h-[520px] w-[520px] rounded-full bg-coral" />
+        <div aria-hidden className="drift-b absolute left-[46%] top-0 h-[110px] w-[110px] rounded-full bg-sky" />
+        <div aria-hidden className="drift-c absolute -right-[60px] top-[420px] h-[220px] w-[220px] rounded-full bg-navy" />
+        <BubbleField rise={1000} />
 
         <div className="relative min-w-0 flex-[1_1_460px]">
           <p className="rise rise-1 mb-5 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-sm font-semibold text-navy">
             <NfcIcon className="h-[18px] w-[18px]" />
             NFC bracelets made for the little ones
           </p>
-          <h1 className="rise rise-2 font-display text-[clamp(48px,7vw,92px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-balance">
-            A little closer to peace of mind.
+          <h1 aria-label="A little closer to peace of mind." className="font-display text-[clamp(48px,7vw,92px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-balance">
+            {["A", "little", "closer", "to"].map((w, i) => (
+              <span key={w} aria-hidden>
+                <span className="word" style={{ "--w": i } as React.CSSProperties}>
+                  {w}
+                </span>{" "}
+              </span>
+            ))}
+            <span aria-hidden className="relative isolate inline-block">
+              {["peace", "of", "mind."].map((w, i) => (
+                <span key={w}>
+                  <span className="word" style={{ "--w": i + 4 } as React.CSSProperties}>
+                    {w}
+                  </span>
+                  {i < 2 ? " " : ""}
+                </span>
+              ))}
+              <span className="highlight-grow absolute -left-[0.06em] -right-[0.06em] bottom-[0.06em] -z-10 h-[0.32em] rounded-full bg-salmon" />
+            </span>
           </h1>
           <p className="rise rise-3 mt-6 max-w-[460px] text-[21px] italic leading-[1.45]">
             Say goodbye to the what-ifs. A Shellie is a bracelet with an NFC tag. Tap it with a phone and the info you chose to share shows up.
@@ -52,10 +72,12 @@ export default function Home() {
           <div className="relative aspect-square w-full max-w-[520px] overflow-hidden rounded-[40px] bg-salmon">
             <div aria-hidden className="float-slow absolute -left-[120px] -top-[90px] h-[380px] w-[380px] rounded-full border-[36px] border-[#FF8A87]" />
             <div aria-hidden className="float-late absolute -bottom-10 -right-[110px] h-[300px] w-[300px] rounded-full border-[36px] border-[#FF8A87]" />
-            <Bracelet hex="#C9973A" label="Classic Shellie bracelet with an NFC tag" className="absolute left-[8%] top-[10%] w-[84%]" />
+            <Bracelet hex="#C9973A" label="Classic Shellie bracelet with an NFC tag" className="swing absolute left-[8%] top-[10%] w-[84%]" />
             <div className="bob absolute bottom-[7%] right-[6%] flex w-[62%] items-center gap-3.5 rounded-3xl bg-white px-5 py-[18px] shadow-[0_18px_40px_rgba(77,5,5,0.18)]">
-              <div className="flex h-[52px] w-[52px] flex-none items-center justify-center rounded-full bg-red">
-                <NfcIcon className="h-[26px] w-[26px]" stroke="#fff" />
+              <div className="relative flex h-[52px] w-[52px] flex-none items-center justify-center rounded-full bg-red">
+                <span aria-hidden className="ripple absolute inset-0 rounded-full border-2 border-red" />
+                <span aria-hidden className="ripple ripple-late absolute inset-0 rounded-full border-2 border-red" />
+                <NfcIcon className="relative h-[26px] w-[26px]" stroke="#fff" />
               </div>
               <div className="min-w-0 text-sm leading-[1.35] text-maroon">
                 <div className="text-base font-bold">Anne Reyes</div>
@@ -71,12 +93,14 @@ export default function Home() {
       <section id="how" className="mx-auto max-w-[1240px] scroll-mt-6 px-6 pb-20 pt-36">
         <h2 className="reveal font-display text-[clamp(38px,5vw,60px)] font-extrabold leading-none tracking-[-0.03em]">Wear it. Tap it. Done.</h2>
         <p className="reveal mt-3.5 max-w-[560px] text-[19px] italic">No app needed for whoever taps it. Any phone with NFC opens your Shellie&apos;s page.</p>
-        <div className="reveal mt-12 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6">
-          {STEPS.map((s) => (
-            <div key={s.n} className={`lift flex flex-col gap-3.5 rounded-[32px] p-8 ${s.card}`}>
-              <div className={`flex h-16 w-16 items-center justify-center rounded-full font-display text-[28px] font-extrabold ${s.badge}`}>{s.n}</div>
+        <div className="mt-12 grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6">
+          {STEPS.map((s, i) => (
+            <div key={s.n} className={`reveal ${["", "reveal-2", "reveal-3"][i]}`}>
+            <div className={`lift flex h-full flex-col gap-3.5 rounded-[32px] p-8 ${s.card}`}>
+              <div className={`reveal-pop flex h-16 w-16 items-center justify-center rounded-full font-display text-[28px] font-extrabold ${s.badge}`}>{s.n}</div>
               <h3 className="text-2xl font-bold">{s.title}</h3>
               <p className={`text-base leading-[1.55] ${s.text}`}>{s.body}</p>
+            </div>
             </div>
           ))}
         </div>
@@ -88,9 +112,6 @@ export default function Home() {
             <p className="mt-[18px] max-w-[460px] text-lg leading-[1.55] text-muted">
               Every field has its own switch. Share just a phone number, or add an address and socials. Change it any time and the bracelet updates straight away.
             </p>
-            <Link href="/my-shellies" className="bubbly mt-7 inline-flex h-14 items-center rounded-[18px] bg-navy px-7 font-semibold text-sky no-underline">
-              Try the editor
-            </Link>
           </div>
           <div className="flex min-w-0 flex-[1_1_380px] flex-col gap-3 rounded-[32px] bg-periwinkle p-7">
             {PREVIEW_FIELDS.map((f) => (
@@ -99,8 +120,8 @@ export default function Home() {
                   <span className="block text-[13px] font-bold">{f.label}</span>
                   <span className="text-[17px]">{f.value}</span>
                 </span>
-                <span aria-hidden className={`relative h-[30px] w-14 flex-none rounded-full border-[3px] border-ink ${f.on ? "bg-ink" : ""}`}>
-                  <span className={`absolute top-[3px] h-[18px] w-[18px] rounded-full ${f.on ? "right-[3px] bg-white" : "left-[3px] bg-ink"}`} />
+                <span aria-hidden className={`relative h-[30px] w-14 flex-none rounded-full border-[3px] border-ink ${f.on ? "bg-ink" : ""} ${f.demo ? "toggle-demo-track" : ""}`}>
+                  <span className={`absolute top-[3px] h-[18px] w-[18px] rounded-full ${f.on ? "right-[3px] bg-white" : "left-[3px] bg-ink"} ${f.demo ? "toggle-demo-knob" : ""}`} />
                 </span>
               </div>
             ))}
@@ -120,9 +141,11 @@ export default function Home() {
           </Link>
         </div>
         <div className="reveal mt-10 grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-5">
-          {PRODUCTS.filter((p) => p.shown).map((p) => (
+          {PRODUCTS.filter((p) => p.shown).map((p, i) => (
             <Link key={p.id} href="/shop" className="lift wiggle-host flex flex-col items-center gap-2 rounded-[28px] bg-white px-4 pb-[22px] pt-5 no-underline">
-              <Bracelet hex={p.hex} label={`${p.name} Shellie`} className="w-full max-w-[170px]" />
+              <span className="bob block w-full max-w-[170px]" style={{ animationDelay: `${i * -0.6}s` }}>
+                <ProductPhoto product={p} />
+              </span>
               <span className="text-[19px] font-bold text-[#111]">{p.name}</span>
             </Link>
           ))}
@@ -131,6 +154,7 @@ export default function Home() {
 
       {/* CTA */}
       <section className="relative overflow-hidden bg-coral px-6 pt-[110px]">
+        <BubbleField rise={700} tone="dark" />
         <div aria-hidden className="float absolute left-[8%] top-10 h-[140px] w-[140px] rounded-full bg-sky" />
         <div aria-hidden className="float-late absolute -right-20 -top-[90px] h-[260px] w-[260px] rounded-full bg-navy" />
         <div className="reveal relative mx-auto max-w-[900px] text-center text-white">
@@ -145,7 +169,9 @@ export default function Home() {
           </Link>
         </div>
         <div aria-hidden className="relative mx-auto mt-[70px] h-[230px] max-w-[620px] overflow-hidden">
-          <Crab color="#C40F0B" className="bob block w-full" />
+          <div className="peek">
+            <Crab color="#C40F0B" className="crab-wave bob block w-full" />
+          </div>
         </div>
       </section>
 

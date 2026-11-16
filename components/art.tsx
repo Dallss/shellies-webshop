@@ -11,9 +11,14 @@ export function Crab({
 }) {
   return (
     <svg viewBox="0 0 120 90" aria-hidden="true" className={className}>
-      <path d="M22 24 L30 10.1 A16 16 0 1 1 14 10.1 Z" fill={color} />
-      <path d="M98 24 L106 10.1 A16 16 0 1 1 90 10.1 Z" fill={color} />
-      <path d="M26 38 L42 58 M94 38 L78 58" stroke={color} strokeWidth="7" strokeLinecap="round" />
+      <g className="claw-l">
+        <path d="M22 24 L30 10.1 A16 16 0 1 1 14 10.1 Z" fill={color} />
+        <path d="M26 38 L42 58" stroke={color} strokeWidth="7" strokeLinecap="round" />
+      </g>
+      <g className="claw-r">
+        <path d="M98 24 L106 10.1 A16 16 0 1 1 90 10.1 Z" fill={color} />
+        <path d="M94 38 L78 58" stroke={color} strokeWidth="7" strokeLinecap="round" />
+      </g>
       <ellipse cx="60" cy="66" rx="36" ry="22" fill={color} />
       <circle cx="50" cy="58" r="5.5" fill="#1A0000" />
       <circle cx="70" cy="58" r="5.5" fill="#1A0000" />

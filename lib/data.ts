@@ -9,6 +9,8 @@ export type Product = {
   stock: number;
   shown: boolean;
   description: string;
+  /** Photo of the listing: a file in /public (e.g. "/shellies/classic.jpg") or a full URL. */
+  image?: string;
 };
 
 export const PRODUCTS: Product[] = [
@@ -49,7 +51,11 @@ export const SAMPLE_ORDERS: Order[] = [
   { id: "PC-1045", name: "Ramon Cruz", phone: "0917 123 4504", city: "Talisay City", address: "Brgy. Lawaan, Talisay City, Cebu", items: [{ productId: "onyx", qty: 1 }, { productId: "pearl", qty: 1 }], payment: "Cash on delivery", status: "packed", placed: "Yesterday, 2:15 PM", note: "" },
   { id: "PC-1044", name: "Bea Dizon", phone: "0917 123 4505", city: "Consolacion", address: "Brgy. Pitogo, Consolacion, Cebu", items: [{ productId: "flamingo", qty: 3 }], payment: "GCash", status: "shipped", placed: "Nov 12", note: "" },
   { id: "PC-1043", name: "Carlo Ramos", phone: "0917 123 4506", city: "Minglanilla", address: "Brgy. Tunghaan, Minglanilla, Cebu", items: [{ productId: "tide", qty: 1 }], payment: "Cash on delivery", status: "delivered", placed: "Nov 11", note: "" },
+  { id: "PC-1031", name: "Liza Santos", phone: "0917 123 4501", city: "Mandaue City", address: "Brgy. Bakilid, Mandaue City, Cebu", items: [{ productId: "classic", qty: 1 }], payment: "Cash on delivery", status: "delivered", placed: "Oct 28", note: "" },
 ];
+
+/** The signed-in shopper on /account. Stand-in until real login exists. */
+export const DEMO_CUSTOMER = { name: "Liza Santos", email: "liza.santos@example.com", phone: "0917 123 4501" };
 
 // ---------- Posts ----------
 

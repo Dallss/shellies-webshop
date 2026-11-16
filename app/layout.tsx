@@ -1,0 +1,39 @@
+import type { Metadata } from "next";
+import { Bricolage_Grotesque, Lexend } from "next/font/google";
+import { CartProvider } from "@/lib/cart";
+import "./globals.css";
+
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  weight: ["700", "800"],
+});
+
+const lexend = Lexend({
+  variable: "--font-lexend",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+export const metadata: Metadata = {
+  title: {
+    default: "Perle & Co. · Shellie NFC bracelets",
+    template: "%s · Perle & Co.",
+  },
+  description:
+    "A Shellie is a bracelet with an NFC tag. Tap it with a phone and the info you chose to share shows up.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={`${bricolage.variable} ${lexend.variable} antialiased`}>
+        <CartProvider>{children}</CartProvider>
+      </body>
+    </html>
+  );
+}

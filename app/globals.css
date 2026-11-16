@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/* Perle & Co. brand tokens, taken from the Shellie designs. */
+@theme inline {
+  --color-navy: #0040a0;
+  --color-ink: #0b2a5b;
+  --color-muted: #33476e;
+  --color-coral: #f2312e;
+  --color-red: #e5100c;
+  --color-crimson: #c40f0b;
+  --color-maroon: #4d0505;
+  --color-wine: #8a3b3b;
+  --color-blush: #fdeeee;
+  --color-rose: #fbdada;
+  --color-salmon: #ffa9a7;
+  --color-ice: #eaf2fe;
+  --color-sky: #dce8fd;
+  --color-sky-2: #bcd5fa;
+  --color-field: #d3e3fc;
+  --color-periwinkle: #73a5f5;
+
+  --font-sans: var(--font-lexend), system-ui, sans-serif;
+  --font-display: var(--font-bricolage), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-blush);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-coral);
+  outline-offset: 2px;
+}
+
+button {
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

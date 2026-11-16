@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { revealIfOffscreen } from "@/components/admin/ui";
 import { orderTotal, useAdmin } from "@/lib/admin-store";
 import { ORDER_STEPS, type Order, type OrderStatus, formatPeso } from "@/lib/data";
 
@@ -76,13 +77,18 @@ export default function OrdersPage() {
     setNotice(status === "cancelled" ? `Order ${id} was cancelled.` : `Order ${id} marked as ${LABEL[status].toLowerCase()}.`);
   }
 
+  function select(id: string) {
+    setSelId(id);
+    revealIfOffscreen("order-detail");
+  }
+
   const stepIdx = order ? ORDER_STEPS.indexOf(order.status as (typeof ORDER_STEPS)[number]) : -1;
 
   return (
     <div className="flex flex-col gap-5 text-[#1B2333]">
       <header className="flex flex-wrap items-end justify-between gap-3 border-b border-[#DCE2EC] pb-4">
         <div>
-          <h1 className="text-[28px] font-semibold tracking-[-0.01em] text-ink">Orders</h1>
+          <h1 className="text-2xl font-semibold sm:text-[28px] tracking-[-0.01em] text-ink">Orders</h1>
           <p className="mt-1 text-[15px] text-[#5B6578]">Review incoming orders and update their fulfilment status.</p>
         </div>
         <p className="text-sm text-[#5B6578]">{orders.length} orders in total</p>
@@ -97,17 +103,17 @@ export default function OrdersPage() {
         </p>
       )}
 
-      <dl className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] overflow-hidden rounded-lg border border-[#DCE2EC] bg-white">
-        {summary.map((s, i) => (
-          <div key={s.label} className={`px-5 py-4 ${i > 0 ? "border-l border-[#DCE2EC]" : ""}`}>
-            <dt className="text-xs font-medium uppercase tracking-[0.06em] text-[#5B6578]">{s.label}</dt>
-            <dd className="mt-1 text-2xl font-semibold tabular-nums text-ink">{s.value}</dd>
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-[#DCE2EC] bg-[#DCE2EC] lg:grid-cols-4">
+        {summary.map((s) => (
+          <div key={s.label} className="bg-white px-4 py-3 sm:px-5 sm:py-4">
+            <dt className="text-[11px] font-medium sm:text-xs uppercase tracking-[0.06em] text-[#5B6578]">{s.label}</dt>
+            <dd className="mt-1 text-xl font-semibold sm:text-2xl tabular-nums text-ink">{s.value}</dd>
           </div>
         ))}
       </dl>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div role="tablist" aria-label="Filter by status" className="flex flex-wrap gap-1 rounded-lg border border-[#DCE2EC] bg-white p-1">
+        <div role="tablist" aria-label="Filter by status" className="-mx-4 flex gap-1 overflow-x-auto border-y border-[#DCE2EC] bg-white p-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:rounded-lg sm:border">
           {TABS.map((t) => {
             const count = t === "all" ? orders.length : orders.filter((o) => o.status === t).length;
             const on = tab === t;
@@ -118,29 +124,55 @@ export default function OrdersPage() {
                 role="tab"
                 aria-selected={on}
                 onClick={() => setTab(t)}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${on ? "bg-ink text-white" : "text-[#3A4456] hover:bg-[#F1F4F9]"}`}
+                className={`flex-none whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors sm:py-1.5 ${on ? "bg-ink text-white" : "text-[#3A4456] hover:bg-[#F1F4F9]"}`}
               >
                 {t === "all" ? "All" : LABEL[t]} <span className={`tabular-nums ${on ? "text-white/70" : "text-[#8A93A5]"}`}>{count}</span>
               </button>
             );
           })}
         </div>
-        <label className="relative">
+        <label className="relative w-full sm:w-auto">
           <span className="sr-only">Search orders</span>
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search order no., customer or city"
-            className="h-10 w-72 max-w-full rounded-lg border border-[#DCE2EC] bg-white pl-3 pr-3 text-sm placeholder:text-[#8A93A5]"
+            className="h-11 w-full rounded-lg border border-[#DCE2EC] bg-white px-3 text-base placeholder:text-[#8A93A5] sm:h-10 sm:w-72 sm:text-sm"
           />
         </label>
       </div>
 
       <div className="flex flex-wrap items-start gap-5">
         {/* Orders table */}
-        <section aria-label="Orders" className="min-w-0 flex-[999_1_560px] overflow-hidden rounded-lg border border-[#DCE2EC] bg-white">
-          <div className="overflow-x-auto">
+        <section aria-label="Orders" className="min-w-0 flex-[999_1_min(560px,100%)] overflow-hidden rounded-lg border border-[#DCE2EC] bg-white">
+          <ul className="divide-y divide-[#E8ECF2] sm:hidden">
+            {shown.length === 0 && <li className="px-4 py-10 text-center text-[#5B6578]">No orders match this filter.</li>}
+            {shown.map((o) => {
+              const on = o.id === selId;
+              return (
+                <li key={o.id}>
+                  <button
+                    type="button"
+                    onClick={() => select(o.id)}
+                    aria-current={on ? "true" : undefined}
+                    className={`flex w-full flex-col gap-1.5 px-4 py-3.5 text-left transition-colors ${on ? "bg-[#EEF3FC] shadow-[inset_3px_0_0_#0040A0]" : "active:bg-[#F8FAFC]"}`}
+                  >
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="font-semibold tabular-nums text-navy">{o.id}</span>
+                      <StatusBadge status={o.status} />
+                    </span>
+                    <span className="flex items-baseline justify-between gap-3">
+                      <span className="min-w-0 truncate font-medium">{o.name} <span className="font-normal text-[#5B6578]">· {o.city}</span></span>
+                      <span className="flex-none font-semibold tabular-nums">{formatPeso(orderTotal(o, products))}</span>
+                    </span>
+                    <span className="text-[13px] text-[#5B6578]">{o.placed} · {itemSummary(o)} · {o.payment}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="hidden overflow-x-auto sm:block">
             <table className="w-full min-w-[720px] border-collapse text-sm">
               <thead className="bg-[#F6F8FB] text-left text-xs font-medium uppercase tracking-[0.06em] text-[#5B6578]">
                 <tr>
@@ -166,12 +198,12 @@ export default function OrdersPage() {
                   return (
                     <tr
                       key={o.id}
-                      onClick={() => setSelId(o.id)}
+                      onClick={() => select(o.id)}
                       aria-selected={on}
                       className={`cursor-pointer border-t border-[#E8ECF2] transition-colors ${on ? "bg-[#EEF3FC]" : "hover:bg-[#F8FAFC]"}`}
                     >
                       <td className={`px-4 py-3 ${on ? "shadow-[inset_3px_0_0_#0040A0]" : ""}`}>
-                        <button type="button" onClick={() => setSelId(o.id)} className="font-semibold tabular-nums text-navy hover:underline">
+                        <button type="button" onClick={() => select(o.id)} className="whitespace-nowrap font-semibold tabular-nums text-navy hover:underline">
                           {o.id}
                         </button>
                       </td>
@@ -199,7 +231,7 @@ export default function OrdersPage() {
 
         {/* Order details */}
         {order && (
-          <section aria-label={`Order ${order.id}`} className="min-w-0 flex-[1_1_340px] rounded-lg border border-[#DCE2EC] bg-white">
+          <section id="order-detail" aria-label={`Order ${order.id}`} className="min-w-0 flex-[1_1_min(340px,100%)] scroll-mt-4 rounded-lg border border-[#DCE2EC] bg-white">
             <div className="flex items-start justify-between gap-3 border-b border-[#E8ECF2] px-5 py-4">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.06em] text-[#5B6578]">Order</p>
@@ -216,13 +248,14 @@ export default function OrdersPage() {
                 return (
                   <li key={st} className="flex flex-1 flex-col gap-1.5" aria-current={i === stepIdx ? "step" : undefined}>
                     <span aria-hidden className={`h-1 rounded-full transition-colors duration-300 ${done ? "bg-navy" : "bg-[#E1E6EE]"}`} />
-                    <span className={`text-[11px] font-medium ${done ? "text-ink" : "text-[#8A93A5]"}`}>{LABEL[st]}</span>
+                    <span className={`hidden text-[11px] font-medium sm:inline ${done ? "text-ink" : "text-[#8A93A5]"}`}>{LABEL[st]}</span>
+                    {i === stepIdx && <span className="text-[11px] font-medium text-ink sm:hidden">{LABEL[st]}</span>}
                   </li>
                 );
               })}
             </ol>
 
-            <dl className="grid grid-cols-[110px_minmax(0,1fr)] gap-x-4 gap-y-2.5 border-b border-[#E8ECF2] px-5 py-4 text-sm">
+            <dl className="grid grid-cols-[84px_minmax(0,1fr)] gap-x-4 sm:grid-cols-[110px_minmax(0,1fr)] gap-y-2.5 border-b border-[#E8ECF2] px-5 py-4 text-sm">
               <dt className="text-[#5B6578]">Customer</dt>
               <dd className="font-medium">{order.name}</dd>
               <dt className="text-[#5B6578]">Phone</dt>
@@ -285,7 +318,7 @@ export default function OrdersPage() {
                 <button
                   type="button"
                   onClick={() => setStatus(order.id, ORDER_STEPS[stepIdx + 1])}
-                  className="h-10 flex-1 rounded-lg bg-navy px-4 text-sm font-semibold text-white transition-colors hover:bg-ink"
+                  className="h-11 flex-1 whitespace-nowrap rounded-lg bg-navy px-4 sm:h-10 text-sm font-semibold text-white transition-colors hover:bg-ink"
                 >
                   {NEXT_ACTION[order.status]}
                 </button>
@@ -294,7 +327,7 @@ export default function OrdersPage() {
                 <button
                   type="button"
                   onClick={() => setStatus(order.id, "cancelled")}
-                  className="h-10 rounded-lg border border-[#E3B4B2] bg-white px-4 text-sm font-semibold text-[#A11410] transition-colors hover:bg-[#FDF3F3]"
+                  className="h-11 whitespace-nowrap rounded-lg border border-[#E3B4B2] sm:h-10 bg-white px-4 text-sm font-semibold text-[#A11410] transition-colors hover:bg-[#FDF3F3]"
                 >
                   Cancel order
                 </button>

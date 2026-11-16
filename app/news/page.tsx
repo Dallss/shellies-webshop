@@ -14,25 +14,25 @@ export default function NewsPage() {
     <div className="min-h-screen overflow-hidden bg-blush">
       <SiteHeader tone="blue" current="/news" />
 
-      <section className="relative mx-auto max-w-[1240px] px-6 pb-8 pt-16">
-        <div aria-hidden className="float-slow absolute -right-[60px] -top-20 h-[220px] w-[220px] rounded-full bg-coral" />
-        <div aria-hidden className="float absolute right-[200px] top-10 h-[60px] w-[60px] rounded-full bg-sky" />
+      <section className="relative mx-auto max-w-[1240px] px-5 pb-6 pt-10 sm:px-6 sm:pb-8 sm:pt-16">
+        <div aria-hidden className="float-slow absolute -right-[90px] -top-24 h-[160px] w-[160px] rounded-full bg-coral sm:-right-[60px] sm:-top-20 sm:h-[220px] sm:w-[220px]" />
+        <div aria-hidden className="float absolute right-[200px] top-10 hidden sm:block h-[60px] w-[60px] rounded-full bg-sky" />
         <p className="rise rise-1 relative text-[15px] font-bold uppercase tracking-[0.06em] text-crimson">From the Perle &amp; Co. team</p>
         <h1 className="rise rise-2 relative mt-2.5 font-display text-[clamp(44px,6.4vw,84px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-maroon">
           News &amp; notes
         </h1>
-        <p className="rise rise-3 relative mt-3.5 max-w-[560px] text-[19px] text-maroon">New drops, setup tips and what we&apos;re working on.</p>
+        <p className="rise rise-3 relative mt-3.5 max-w-[560px] text-[17px] text-maroon sm:text-[19px]">New drops, setup tips and what we&apos;re working on.</p>
       </section>
 
       {featured && (
-        <section className="rise rise-4 mx-auto max-w-[1240px] px-6 py-4">
-          <article className="flex flex-wrap overflow-hidden rounded-[40px] bg-navy text-white">
-            <div className="flex min-h-80 min-w-0 flex-[1_1_420px] flex-wrap items-center justify-center gap-1 bg-sky p-8">
+        <section className="rise rise-4 mx-auto max-w-[1240px] px-5 py-4 sm:px-6">
+          <article className="flex flex-wrap overflow-hidden rounded-[32px] bg-navy text-white sm:rounded-[40px]">
+            <div className="flex min-h-56 min-w-0 flex-[1_1_min(420px,100%)] flex-wrap items-center justify-center gap-1 bg-sky p-6 sm:min-h-80 sm:p-8">
               {PRODUCTS.map((p) => (
                 <Bracelet key={p.id} hex={p.hex} className="bob w-[30%] max-w-40" />
               ))}
             </div>
-            <div className="flex min-w-0 flex-[1_1_420px] flex-col gap-4 p-[clamp(26px,3.4vw,48px)]">
+            <div className="flex min-w-0 flex-[1_1_min(420px,100%)] flex-col gap-4 p-[clamp(26px,3.4vw,48px)]">
               <p className="text-sm font-semibold uppercase tracking-[0.06em] text-sky-2">
                 {featured.category} · {featured.date}
               </p>
@@ -46,11 +46,11 @@ export default function NewsPage() {
         </section>
       )}
 
-      <section className="mx-auto max-w-[1240px] px-6 pb-12 pt-8">
+      <section className="mx-auto max-w-[1240px] px-5 pb-12 pt-8 sm:px-6">
         <h2 className="mb-5 font-display text-[34px] font-extrabold tracking-[-0.02em] text-maroon">More posts</h2>
-        <div className="reveal grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-[22px]">
+        <div className="reveal grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-4 sm:gap-[22px]">
           {rest.map((p) => (
-            <article key={p.id} className="lift flex flex-col gap-3 rounded-[32px] bg-white p-7 text-maroon">
+            <article key={p.id} className="lift flex flex-col gap-3 rounded-[28px] bg-white p-6 text-maroon sm:rounded-[32px] sm:p-7">
               <span className="self-start rounded-full bg-sky px-3 py-1 text-[13px] font-bold text-navy">
                 {p.category} · {p.date}
               </span>
@@ -71,7 +71,7 @@ export default function NewsPage() {
         </div>
       </section>
 
-      <footer className="bg-ink px-6 py-9 text-sky">
+      <footer className="bg-ink px-5 py-9 text-sky sm:px-6">
         <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-3 text-[15px]">
           <span className="font-display text-xl font-extrabold text-white">Perle &amp; Co.</span>
           <span>A little closer to peace of mind.</span>

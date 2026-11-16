@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PageTitle, Pill, Toast, coralBtn, dangerBtn, labelClass, primaryBtn } from "@/components/admin/ui";
+import { PageTitle, Pill, Toast, coralBtn, dangerBtn, labelClass, primaryBtn, revealIfOffscreen } from "@/components/admin/ui";
 import { useAdmin } from "@/lib/admin-store";
 import type { PostCategory } from "@/lib/data";
 
@@ -56,6 +56,7 @@ export default function PostsPage() {
               setDraft(EMPTY);
               setMissing(false);
               setToast("");
+              revealIfOffscreen("post-editor");
             }}
           >
             + New post
@@ -64,7 +65,7 @@ export default function PostsPage() {
       />
 
       <div className="rise rise-2 flex flex-wrap items-start gap-6">
-        <div className="flex min-w-0 flex-[1_1_320px] flex-col gap-2.5">
+        <div className="flex min-w-0 flex-[1_1_min(320px,100%)] flex-col gap-2.5">
           {posts.map((p) => (
             <button
               key={p.id}
@@ -74,6 +75,7 @@ export default function PostsPage() {
                 setDraft({ title: p.title, category: p.category, body: p.body });
                 setMissing(false);
                 setToast("");
+                revealIfOffscreen("post-editor");
               }}
               className={`lift pop flex w-full flex-col gap-1.5 rounded-[22px] border-[3px] bg-white px-[18px] py-4 text-left ${p.id === editingId ? "border-navy" : "border-transparent"}`}
             >
@@ -90,7 +92,7 @@ export default function PostsPage() {
           ))}
         </div>
 
-        <form aria-label="Write a post" onSubmit={(e) => e.preventDefault()} className="flex min-w-0 flex-[999_1_460px] flex-col gap-3.5 rounded-[32px] bg-white p-[26px]">
+        <form id="post-editor" aria-label="Write a post" onSubmit={(e) => e.preventDefault()} className="flex min-w-0 flex-[999_1_min(460px,100%)] scroll-mt-4 flex-col gap-3.5 rounded-[28px] bg-white p-5 sm:rounded-[32px] sm:p-[26px]">
           <h2 className="font-display text-[26px] font-extrabold tracking-[-0.02em]">{editingId ? "Edit post" : "New post"}</h2>
           <div className="flex flex-col gap-1.5">
             <label htmlFor="p-title" className={labelClass}>Title</label>
@@ -114,7 +116,7 @@ export default function PostsPage() {
           </fieldset>
           <div className="flex flex-col gap-1.5">
             <label htmlFor="p-body" className={labelClass}>Post</label>
-            <textarea id="p-body" rows={7} value={draft.body} onChange={(e) => change({ body: e.target.value })} className="resize-y rounded-[14px] bg-ice px-3.5 py-3 text-[15px] leading-relaxed text-ink" />
+            <textarea id="p-body" rows={7} value={draft.body} onChange={(e) => change({ body: e.target.value })} className="resize-y rounded-[14px] bg-ice px-3.5 py-3 text-base leading-relaxed text-ink" />
           </div>
           {missing && <p className="jelly text-sm font-semibold text-crimson">Add a title and some text before publishing.</p>}
           <div className="flex flex-wrap gap-2.5">

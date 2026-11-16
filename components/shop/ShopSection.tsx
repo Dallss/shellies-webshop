@@ -22,28 +22,28 @@ export function ShopSection() {
 
   return (
     <>
-      <section id="shop" className="mx-auto max-w-[1240px] scroll-mt-6 px-6 pb-6 pt-16">
+      <section id="shop" className="mx-auto max-w-[1240px] scroll-mt-6 px-5 pb-6 pt-8 sm:px-6 sm:pt-16">
         <h1 className="rise rise-1 font-display text-[clamp(42px,6vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-navy">
           The <i>Shellie</i> Collection
         </h1>
-        <p className="rise rise-2 mt-3 text-[19px]">Made to your taste. Every Shellie comes with its NFC tag ready to set up.</p>
+        <p className="rise rise-2 mt-3 text-[17px] sm:text-[19px]">Made to your taste. Every Shellie comes with its NFC tag ready to set up.</p>
 
-        <div className="rise rise-3 mt-10 flex flex-wrap items-stretch gap-8">
-          <div className="relative flex min-h-[460px] min-w-0 flex-[1_1_480px] items-center justify-center overflow-hidden rounded-[40px] bg-white">
-            <div key={`tint-${sel.id}`} aria-hidden className="pop absolute left-1/2 top-1/2 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ background: sel.tint }} />
-            <div key={sel.id} className="pop relative flex w-[78%] max-w-[440px] justify-center">
+        <div className="rise rise-3 mt-8 flex flex-wrap items-stretch gap-5 sm:mt-10 sm:gap-8">
+          <div className="relative flex min-h-[320px] min-w-0 flex-[1_1_min(480px,100%)] items-center justify-center overflow-hidden rounded-[32px] bg-white py-8 sm:min-h-[460px] sm:rounded-[40px]">
+            <div key={`tint-${sel.id}`} aria-hidden className="pop absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-[340px] sm:w-[340px]" style={{ background: sel.tint }} />
+            <div key={sel.id} className="pop relative flex w-[72%] max-w-[440px] justify-center sm:w-[78%]">
               <ProductPhoto product={sel} priority sizes="(max-width: 640px) 80vw, 440px" className={sel.image ? "shadow-[0_18px_40px_rgba(0,64,160,0.15)]" : "bob"} />
             </div>
-            <div aria-hidden className="absolute bottom-0 left-9 h-[62px] w-[130px] overflow-hidden">
-              <Crab className="bob block w-[130px]" />
+            <div aria-hidden className="absolute bottom-0 left-6 h-[48px] w-[100px] overflow-hidden sm:left-9 sm:h-[62px] sm:w-[130px]">
+              <Crab className="bob block w-[100px] sm:w-[130px]" />
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-[1_1_380px] flex-col gap-[22px] rounded-[40px] bg-navy p-[clamp(24px,3.4vw,44px)] text-white">
+          <div className="flex min-w-0 flex-[1_1_min(380px,100%)] flex-col gap-[22px] rounded-[32px] bg-navy sm:rounded-[40px] p-[clamp(24px,3.4vw,44px)] text-white">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.06em] text-sky-2">Signature Collection · Original edition</p>
-              <h3 key={sel.id} className="pop mt-2 font-display text-[54px] font-extrabold leading-none tracking-[-0.03em]">{sel.name}</h3>
-              <p className="mt-2.5 text-[30px] font-bold">{formatPeso(sel.price)}</p>
+              <h3 key={sel.id} className="pop mt-2 font-display text-[44px] font-extrabold sm:text-[54px] leading-none tracking-[-0.03em]">{sel.name}</h3>
+              <p className="mt-2 text-[26px] font-bold sm:mt-2.5 sm:text-[30px]">{formatPeso(sel.price)}</p>
             </div>
             <div>
               <p className="mb-3 text-[15px] font-semibold">Color: {sel.name}</p>
@@ -56,7 +56,7 @@ export function ShopSection() {
                     aria-checked={p.id === sel.id}
                     aria-label={p.name}
                     onClick={() => setSelId(p.id)}
-                    className="bubbly h-[52px] w-[52px] rounded-full border-4 border-white p-0"
+                    className="bubbly h-12 w-12 rounded-full border-4 border-white p-0 sm:h-[52px] sm:w-[52px]"
                     style={{ background: p.hex, boxShadow: p.id === sel.id ? "0 0 0 3px #F2312E" : undefined }}
                   />
                 ))}
@@ -100,19 +100,19 @@ export function ShopSection() {
         </div>
       </section>
 
-      <section className="mx-auto flex max-w-[1240px] flex-wrap items-start gap-8 px-6 pb-24 pt-12">
-        <div className="min-w-0 flex-[999_1_600px]">
-          <h3 className="text-center font-display text-[40px] font-extrabold tracking-[-0.03em]">The Signature Collection</h3>
+      <section className="mx-auto flex max-w-[1240px] flex-wrap items-start gap-8 px-5 pb-20 pt-10 sm:px-6 sm:pb-24 sm:pt-12">
+        <div className="min-w-0 flex-[999_1_min(600px,100%)]">
+          <h3 className="text-center font-display text-[32px] font-extrabold leading-tight tracking-[-0.03em] sm:text-[40px]">The Signature Collection</h3>
           <p className="mt-1.5 text-center font-semibold text-navy">The original edition</p>
           {/* Horizontal row: card widths leave the next card partly visible so it's clear the row scrolls.
               On phones it bleeds to the screen edge; py-4 keeps card shadows and hover lift from being clipped. */}
           <div
             role="list"
             aria-label="Signature Collection colors"
-            className="reveal -mx-6 mt-4 flex snap-x snap-mandatory scroll-px-6 gap-[22px] overflow-x-auto overscroll-x-contain px-6 py-4 [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:px-0 sm:[scrollbar-width:thin]"
+            className="reveal -mx-5 mt-4 flex snap-x snap-mandatory scroll-px-5 gap-[22px] overflow-x-auto overscroll-x-contain px-5 py-4 [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:px-0 sm:[scrollbar-width:thin]"
           >
             {products.map((p) => (
-              <div key={p.id} role="listitem" className="lift wiggle-host flex w-[72%] flex-none snap-start flex-col items-center gap-2.5 rounded-[30px] bg-white px-[18px] py-[22px] shadow-[0_10px_30px_rgba(0,64,160,0.06)] sm:w-[42%] lg:w-[30%]">
+              <div key={p.id} role="listitem" className="lift wiggle-host flex w-[72%] flex-none snap-start flex-col items-center gap-2.5 rounded-[26px] bg-white px-4 py-5 shadow-[0_10px_30px_rgba(0,64,160,0.06)] sm:w-[42%] sm:rounded-[30px] sm:px-[18px] sm:py-[22px] lg:w-[30%]">
                 <button type="button" onClick={() => setSelId(p.id)} aria-label={`View ${p.name}`} className="w-full">
                   <ProductPhoto product={p} decorative className="mx-auto max-w-[180px]" />
                 </button>
@@ -136,7 +136,7 @@ export function ShopSection() {
           <p className="mt-10 text-center text-[17px]">That&apos;s it… for now! :3</p>
         </div>
 
-        <aside id="cart" aria-label="Cart" className="reveal flex min-w-0 flex-[1_1_320px] scroll-mt-6 flex-col gap-4 rounded-[32px] bg-white p-7">
+        <aside id="cart" aria-label="Cart" className="reveal flex min-w-0 flex-[1_1_min(320px,100%)] scroll-mt-6 flex-col gap-4 rounded-[28px] bg-white p-5 sm:rounded-[32px] sm:p-7">
           <h3 className="font-display text-[32px] font-extrabold tracking-[-0.02em]">Your cart</h3>
           {lines.length === 0 && (
             <div className="pop rounded-[20px] bg-blush p-6 text-center text-maroon">
@@ -154,7 +154,7 @@ export function ShopSection() {
                 </div>
               </div>
               <div key={cart[p.id]} className="jelly font-bold">{formatPeso(cart[p.id] * p.price)}</div>
-              <button type="button" onClick={() => remove(p.id)} aria-label={`Remove ${p.name}`} className="bubbly h-9 w-9 rounded-[10px] text-xl text-crimson">
+              <button type="button" onClick={() => remove(p.id)} aria-label={`Remove ${p.name}`} className="bubbly h-10 w-10 flex-none rounded-[10px] text-xl text-crimson">
                 ×
               </button>
             </div>

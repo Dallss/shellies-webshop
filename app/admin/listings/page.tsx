@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PageTitle, Pill, Toast, coralBtn, dangerBtn, inputClass, labelClass } from "@/components/admin/ui";
+import { PageTitle, Pill, Toast, coralBtn, dangerBtn, inputClass, labelClass, revealIfOffscreen } from "@/components/admin/ui";
 import { ProductPhoto } from "@/components/ProductPhoto";
 import { Switch } from "@/components/Switch";
 import { useAdmin } from "@/lib/admin-store";
@@ -51,6 +51,7 @@ export default function ListingsPage() {
               const id = `new-${Date.now()}`;
               setProducts((ps) => [...ps, { id, name: "New Shellie", hex: "#C985DB", tint: "#F1E4F5", price: 149, stock: 0, shown: false, description: "" }]);
               setSelId(id);
+              revealIfOffscreen("listing-editor");
               setToast("New listing added. It stays hidden until you switch on Show in the shop.");
             }}
           >
@@ -60,19 +61,22 @@ export default function ListingsPage() {
       />
 
       <div className="rise rise-2 flex flex-wrap items-start gap-6">
-        <div className="grid min-w-0 flex-[999_1_480px] grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
+        <div className="grid min-w-0 flex-[999_1_min(480px,100%)] grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] sm:gap-4">
           {products.map((p) => {
             const st = stateOf(p);
             return (
               <button
                 key={p.id}
                 type="button"
-                onClick={() => setSelId(p.id)}
-                className={`lift wiggle-host flex flex-col items-center gap-2 rounded-[28px] border-[3px] bg-white p-[18px] ${p.id === selId ? "border-navy" : "border-transparent"} ${p.shown ? "" : "opacity-60"}`}
+                onClick={() => {
+                  setSelId(p.id);
+                  revealIfOffscreen("listing-editor");
+                }}
+                className={`lift wiggle-host flex min-w-0 flex-col items-center gap-1.5 rounded-[24px] border-[3px] bg-white p-3 sm:gap-2 sm:rounded-[28px] sm:p-[18px] ${p.id === selId ? "border-navy" : "border-transparent"} ${p.shown ? "" : "opacity-60"}`}
               >
                 <ProductPhoto product={p} decorative className="max-w-[150px]" />
-                <span className="text-[19px] font-bold">{p.name}</span>
-                <span className="text-[15px]">
+                <span className="text-[17px] font-bold sm:text-[19px]">{p.name}</span>
+                <span className="text-center text-sm sm:text-[15px]">
                   {formatPeso(p.price)} · {p.stock} in stock
                 </span>
                 <Pill key={st.label} className={`pop py-1! text-xs! ${st.className}`}>{st.label}</Pill>
@@ -82,7 +86,7 @@ export default function ListingsPage() {
         </div>
 
         {sel && (
-          <form key={sel.id} aria-label="Edit listing" onSubmit={(e) => e.preventDefault()} className="pop flex min-w-0 flex-[1_1_340px] flex-col gap-3.5 rounded-[32px] bg-periwinkle p-[26px]">
+          <form key={sel.id} id="listing-editor" aria-label="Edit listing" onSubmit={(e) => e.preventDefault()} className="pop flex min-w-0 flex-[1_1_min(340px,100%)] scroll-mt-4 flex-col gap-3.5 rounded-[28px] bg-periwinkle p-5 sm:rounded-[32px] sm:p-[26px]">
             <h2 className="font-display text-[28px] font-extrabold tracking-[-0.02em]">Edit {sel.name}</h2>
             <div className="flex flex-col gap-2">
               <span className={labelClass}>Photo</span>
@@ -160,7 +164,7 @@ export default function ListingsPage() {
             </fieldset>
             <div className="flex flex-col gap-1.5">
               <label htmlFor="l-desc" className={labelClass}>Description</label>
-              <textarea id="l-desc" rows={3} value={sel.description} onChange={(e) => patch({ description: e.target.value })} className="resize-y rounded-[14px] bg-field px-3.5 py-3 text-[15px] text-ink" />
+              <textarea id="l-desc" rows={3} value={sel.description} onChange={(e) => patch({ description: e.target.value })} className="resize-y rounded-[14px] bg-field px-3.5 py-3 text-base text-ink" />
             </div>
             <div className="flex items-center justify-between gap-3 rounded-2xl bg-sky px-3.5 py-3">
               <span className="font-semibold">Show in the shop</span>

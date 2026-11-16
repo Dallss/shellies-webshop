@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Bracelet, Crab } from "@/components/art";
 import { SiteHeader } from "@/components/SiteHeader";
+import { TAB_BAR_SPACE } from "@/components/TabBar";
 import { PRODUCTS, SAMPLE_POSTS } from "@/lib/data";
 
 export const metadata: Metadata = { title: "News & notes" };
@@ -71,7 +72,7 @@ export default function NewsPage() {
         </div>
       </section>
 
-      <footer className="bg-ink px-5 py-9 text-sky sm:px-6">
+      <footer className={`bg-ink px-5 pt-9 text-sky sm:px-6 md:pb-9 ${TAB_BAR_SPACE}`}>
         <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-3 text-[15px]">
           <span className="font-display text-xl font-extrabold text-white">Perle &amp; Co.</span>
           <span>A little closer to peace of mind.</span>

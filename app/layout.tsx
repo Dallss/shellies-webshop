@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Lexend } from "next/font/google";
 import { CartProvider } from "@/lib/cart";
 import { SessionProvider } from "@/lib/session";
@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   description:
     "A Shellie is a bracelet with an NFC tag. Tap it with a phone and the info you chose to share shows up.",
 };
+
+// "cover" lets the phone tab bar sit above the home indicator via env(safe-area-inset-bottom).
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default function RootLayout({
   children,

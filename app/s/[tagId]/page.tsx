@@ -31,37 +31,37 @@ export default async function ScanPage({ params }: Props) {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-blush text-maroon">
-      <div aria-hidden className="absolute -left-[110px] -top-[170px] h-[300px] w-[300px] rounded-full bg-coral" />
-      <div aria-hidden className="absolute right-[120px] top-10 h-[74px] w-[74px] rounded-full bg-sky" />
-      <div aria-hidden className="absolute -right-[70px] top-[90px] h-[150px] w-[150px] rounded-full bg-navy" />
+      <div aria-hidden className="float-slow absolute -left-[110px] -top-[170px] h-[300px] w-[300px] rounded-full bg-coral" />
+      <div aria-hidden className="float absolute right-[120px] top-10 h-[74px] w-[74px] rounded-full bg-sky" />
+      <div aria-hidden className="float-late absolute -right-[70px] top-[90px] h-[150px] w-[150px] rounded-full bg-navy" />
 
       <div className="relative mx-auto flex max-w-[480px] flex-col gap-[18px] px-5 pb-8 pt-[150px]">
-        <div className="flex items-center gap-4">
-          <div className="h-[76px] w-[76px] flex-none rounded-full border-[5px] border-white shadow-[0_6px_18px_rgba(77,5,5,0.12)]" style={{ background: colorHex(shellie.color) }} />
+        <div className="rise rise-1 flex items-center gap-4">
+          <div className="pop h-[76px] w-[76px] flex-none rounded-full border-[5px] border-white shadow-[0_6px_18px_rgba(77,5,5,0.12)]" style={{ background: colorHex(shellie.color) }} />
           <div>
             <p className="text-[15px] italic">Hi! You found</p>
             <h1 className="font-display text-[42px] font-extrabold leading-none tracking-[-0.03em]">{shellie.name}&apos;s Shellie</h1>
           </div>
         </div>
-        <p className="text-base leading-normal">
+        <p className="rise rise-2 text-base leading-normal">
           If {shellie.name} needs help or seems lost, please call their family. Thank you for stopping to help.
         </p>
 
         {phone.shared && phone.value && (
-          <>
-            <a href={`tel:${tel}`} className="flex h-[68px] items-center justify-center gap-3 rounded-[22px] bg-navy text-xl font-bold text-white no-underline">
+          <div className="rise rise-3 flex flex-col gap-[18px]">
+            <a href={`tel:${tel}`} className="pulse-ring bubbly flex h-[68px] items-center justify-center gap-3 rounded-[22px] bg-navy text-xl font-bold text-white no-underline">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
               </svg>
               Call family · {phone.value.replace("(+63) ", "0")}
             </a>
-            <a href={`sms:${tel}`} className="flex h-14 items-center justify-center gap-2.5 rounded-[20px] border-[3px] border-red text-[17px] font-bold text-red no-underline">
+            <a href={`sms:${tel}`} className="bubbly flex h-14 items-center justify-center gap-2.5 rounded-[20px] border-[3px] border-red text-[17px] font-bold text-red no-underline">
               Send a text
             </a>
-          </>
+          </div>
         )}
 
-        <section aria-labelledby="info-h" className="mt-1.5 flex flex-col gap-1 rounded-[28px] bg-white p-[22px]">
+        <section aria-labelledby="info-h" className="rise rise-5 mt-1.5 flex flex-col gap-1 rounded-[28px] bg-white p-[22px]">
           <h2 id="info-h" className="mb-2 font-display text-2xl font-extrabold">
             About {shellie.name}
           </h2>
@@ -88,7 +88,7 @@ export default async function ScanPage({ params }: Props) {
         </section>
 
         {socials.length > 0 && (
-          <section aria-labelledby="soc-h" className="rounded-[28px] bg-sky px-[22px] py-5 text-ink">
+          <section aria-labelledby="soc-h" className="reveal rounded-[28px] bg-sky px-[22px] py-5 text-ink">
             <h2 id="soc-h" className="mb-3 text-[15px] font-bold">
               Also reach the family on
             </h2>
@@ -106,7 +106,7 @@ export default async function ScanPage({ params }: Props) {
 
         <div className="relative mt-7 min-h-[92px] overflow-hidden rounded-[28px] bg-white py-[22px] pl-[140px] pr-[22px]">
           <div aria-hidden className="absolute bottom-0 left-[18px] h-14 w-[104px] overflow-hidden">
-            <Crab className="block w-[104px]" />
+            <Crab className="bob block w-[104px]" />
           </div>
           <p className="font-display text-[17px] font-extrabold text-ink">Perle &amp; Co.</p>
           <Link href="/" className="text-sm font-semibold">

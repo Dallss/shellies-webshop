@@ -63,7 +63,7 @@ export default function PostsPage() {
         }
       />
 
-      <div className="flex flex-wrap items-start gap-6">
+      <div className="rise rise-2 flex flex-wrap items-start gap-6">
         <div className="flex min-w-0 flex-[1_1_320px] flex-col gap-2.5">
           {posts.map((p) => (
             <button
@@ -75,7 +75,7 @@ export default function PostsPage() {
                 setMissing(false);
                 setToast("");
               }}
-              className={`flex w-full flex-col gap-1.5 rounded-[22px] border-[3px] bg-white px-[18px] py-4 text-left ${p.id === editingId ? "border-navy" : "border-transparent"}`}
+              className={`lift pop flex w-full flex-col gap-1.5 rounded-[22px] border-[3px] bg-white px-[18px] py-4 text-left ${p.id === editingId ? "border-navy" : "border-transparent"}`}
             >
               <span className="flex flex-wrap items-center gap-2">
                 <Pill className={`py-0.5! text-xs! ${p.status === "published" ? "bg-[#D7F2E2] text-[#14663D]" : "bg-[#FFF1C7] text-[#7A5200]"}`}>
@@ -105,7 +105,7 @@ export default function PostsPage() {
                   type="button"
                   aria-pressed={draft.category === c}
                   onClick={() => change({ category: c })}
-                  className={`h-11 rounded-full px-4 text-[15px] font-semibold ${draft.category === c ? "bg-ink text-white" : "bg-ice text-ink"}`}
+                  className={`bubbly h-11 rounded-full px-4 text-[15px] font-semibold ${draft.category === c ? "bg-ink text-white" : "bg-ice text-ink"}`}
                 >
                   {c}
                 </button>
@@ -116,12 +116,12 @@ export default function PostsPage() {
             <label htmlFor="p-body" className={labelClass}>Post</label>
             <textarea id="p-body" rows={7} value={draft.body} onChange={(e) => change({ body: e.target.value })} className="resize-y rounded-[14px] bg-ice px-3.5 py-3 text-[15px] leading-relaxed text-ink" />
           </div>
-          {missing && <p className="text-sm font-semibold text-crimson">Add a title and some text before publishing.</p>}
+          {missing && <p className="jelly text-sm font-semibold text-crimson">Add a title and some text before publishing.</p>}
           <div className="flex flex-wrap gap-2.5">
             <button type="button" onClick={() => save("published")} className={`flex-[1_1_180px] ${primaryBtn}`}>
               Publish
             </button>
-            <button type="button" onClick={() => save("draft")} className="h-14 flex-[1_1_160px] rounded-[18px] bg-sky text-[17px] font-bold text-navy">
+            <button type="button" onClick={() => save("draft")} className="bubbly h-14 flex-[1_1_160px] rounded-[18px] bg-sky text-[17px] font-bold text-navy">
               Save as draft
             </button>
             {editingId && (

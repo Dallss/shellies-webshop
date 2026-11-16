@@ -47,30 +47,30 @@ export default function OrdersPage() {
       <Toast message={toast} />
       <PageTitle title="Orders" intro="Confirm new orders, then move each one along as you pack and ship it." />
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3.5">
+      <div className="rise rise-2 grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3.5">
         {stats.map((s) => (
           <div key={s.label} className={`rounded-[26px] p-5 ${s.hot ? "bg-coral text-white" : "bg-white"}`}>
             <p className={`text-sm font-semibold ${s.hot ? "" : "text-muted"}`}>{s.label}</p>
-            <p className="mt-1.5 font-display text-[44px] font-extrabold leading-none">{s.value}</p>
+            <p key={String(s.value)} className="pop mt-1.5 font-display text-[44px] font-extrabold leading-none">{s.value}</p>
           </div>
         ))}
       </div>
 
-      <div role="group" aria-label="Filter orders" className="flex flex-wrap gap-2">
+      <div role="group" aria-label="Filter orders" className="rise rise-3 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button
             key={f}
             type="button"
             aria-pressed={filter === f}
             onClick={() => setFilter(f)}
-            className={`h-11 rounded-full px-4 text-[15px] font-semibold ${filter === f ? "bg-ink text-white" : "bg-white text-ink"}`}
+            className={`bubbly h-11 rounded-full px-4 text-[15px] font-semibold ${filter === f ? "bg-ink text-white" : "bg-white text-ink"}`}
           >
             {f === "all" ? "All" : LABEL[f]} · {f === "all" ? orders.length : orders.filter((o) => o.status === f).length}
           </button>
         ))}
       </div>
 
-      <div className="flex flex-wrap items-start gap-6">
+      <div className="rise rise-4 flex flex-wrap items-start gap-6">
         <div className="flex min-w-0 flex-[999_1_480px] flex-col gap-2.5">
           {shown.length === 0 && <p className="rounded-[22px] bg-white p-6 text-center">No orders here right now.</p>}
           {shown.map((o) => (
@@ -78,7 +78,7 @@ export default function OrdersPage() {
               key={o.id}
               type="button"
               onClick={() => setSelId(o.id)}
-              className={`flex w-full flex-wrap items-center gap-x-4 gap-y-3 rounded-[22px] border-[3px] bg-white px-[18px] py-4 text-left ${o.id === selId ? "border-navy" : "border-transparent"}`}
+              className={`lift flex w-full flex-wrap items-center gap-x-4 gap-y-3 rounded-[22px] border-[3px] bg-white px-[18px] py-4 text-left ${o.id === selId ? "border-navy" : "border-transparent"}`}
             >
               <span className="flex min-w-0 flex-[1_1_200px] flex-col gap-0.5">
                 <span className="text-base font-bold">{o.name}</span>
@@ -92,13 +92,13 @@ export default function OrdersPage() {
                 ))}
               </span>
               <span className="min-w-16 text-right font-bold">{formatPeso(orderTotal(o, products))}</span>
-              <Pill className={`min-w-24 ${PILL[o.status]}`}>{LABEL[o.status]}</Pill>
+              <Pill key={o.status} className={`pop min-w-24 ${PILL[o.status]}`}>{LABEL[o.status]}</Pill>
             </button>
           ))}
         </div>
 
         {order && (
-          <section aria-label="Order details" className="flex min-w-0 flex-[1_1_340px] flex-col gap-[18px] rounded-[32px] bg-white p-[26px]">
+          <section key={order.id} aria-label="Order details" className="pop flex min-w-0 flex-[1_1_340px] flex-col gap-[18px] rounded-[32px] bg-white p-[26px]">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-sm text-muted">
@@ -106,7 +106,7 @@ export default function OrdersPage() {
                 </p>
                 <h2 className="mt-1 font-display text-[30px] font-extrabold leading-[1.05] tracking-[-0.02em]">{order.name}</h2>
               </div>
-              <Pill className={PILL[order.status]}>{LABEL[order.status]}</Pill>
+              <Pill key={order.status} className={`pop ${PILL[order.status]}`}>{LABEL[order.status]}</Pill>
             </div>
 
             <ol className="flex gap-1.5">
@@ -114,7 +114,7 @@ export default function OrdersPage() {
                 const done = order.status !== "cancelled" && i <= stepIdx;
                 return (
                   <li key={st} className={`flex flex-1 flex-col gap-1.5 text-xs font-semibold ${done ? "text-ink" : "text-[#6B7A99]"}`}>
-                    <span aria-hidden className={`h-2 rounded-full ${order.status === "cancelled" ? "bg-[#E6E6E6]" : done ? "bg-navy" : "bg-sky"}`} />
+                    <span aria-hidden className={`h-2 rounded-full transition-colors duration-500 ${order.status === "cancelled" ? "bg-[#E6E6E6]" : done ? "bg-navy" : "bg-sky"}`} />
                     {LABEL[st]}
                   </li>
                 );

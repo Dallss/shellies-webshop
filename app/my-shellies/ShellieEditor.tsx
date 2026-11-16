@@ -37,7 +37,7 @@ export function ShellieEditor() {
         <nav aria-label="App" className="flex flex-col gap-1.5">
           <Link href="/" className="flex h-[52px] items-center rounded-2xl px-4 font-medium text-sky no-underline">Home</Link>
           <Link href="/my-shellies" aria-current="page" className="flex h-[52px] items-center rounded-2xl bg-periwinkle px-4 font-bold text-ink no-underline">My Shellies</Link>
-          <Link href="/#shop" className="flex h-[52px] items-center rounded-2xl px-4 font-medium text-sky no-underline">Shop</Link>
+          <Link href="/shop" className="flex h-[52px] items-center rounded-2xl px-4 font-medium text-sky no-underline">Shop</Link>
         </nav>
         <div className="mt-auto flex items-center gap-3 rounded-[18px] bg-ink p-3">
           <span aria-hidden className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-maroon text-lg font-bold">M</span>
@@ -52,7 +52,7 @@ export function ShellieEditor() {
         <div className="mx-auto flex max-w-[1120px] flex-col gap-[26px]">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 className="font-display text-[clamp(38px,4.4vw,56px)] font-extrabold leading-none tracking-[-0.03em] text-navy">Edit my Shellie</h1>
+              <h1 className="rise rise-1 font-display text-[clamp(38px,4.4vw,56px)] font-extrabold leading-none tracking-[-0.03em] text-navy">Edit my Shellie</h1>
               <p className="mt-2 text-[17px]">Choose what people see when they tap it.</p>
             </div>
             <div role="tablist" aria-label="Your Shellies" className="flex flex-wrap gap-2.5">
@@ -68,7 +68,7 @@ export function ShellieEditor() {
                       setActiveId(s.tagId);
                       setStatus("");
                     }}
-                    className={`inline-flex h-[52px] items-center gap-2.5 rounded-[18px] pl-2 pr-[18px] text-[15px] ${on ? "bg-[#1F56A8] font-bold text-white" : "bg-sky-2 font-semibold text-ink"}`}
+                    className={`bubbly inline-flex h-[52px] items-center gap-2.5 rounded-[18px] pl-2 pr-[18px] text-[15px] ${on ? "bg-[#1F56A8] font-bold text-white" : "bg-sky-2 font-semibold text-ink"}`}
                   >
                     <span aria-hidden className="h-9 w-9 rounded-full border-[3px] border-white" style={{ background: colorHex(s.color) }} />
                     {s.name}&apos;s Shellie
@@ -78,7 +78,7 @@ export function ShellieEditor() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-start gap-[26px]">
+          <div className="rise rise-2 flex flex-wrap items-start gap-[26px]">
             <form
               aria-label="Shellie details"
               className="flex min-w-0 flex-[999_1_460px] flex-col gap-[18px] rounded-[36px] bg-periwinkle p-[clamp(20px,2.6vw,34px)]"
@@ -98,13 +98,15 @@ export function ShellieEditor() {
                       aria-pressed={c.id === cur.color}
                       aria-label={c.name}
                       onClick={() => edit((s) => (s.color = c.id))}
-                      className="h-[52px] w-[52px] rounded-full border-4 border-white"
+                      className="bubbly h-[52px] w-[52px] rounded-full border-4 border-white"
                       style={{ background: c.hex, boxShadow: c.id === cur.color ? "0 0 0 3px #0B2A5B" : undefined }}
                     />
                   ))}
                 </div>
               </fieldset>
-              <p className="text-[15px] font-semibold">{cur.fields.filter((f) => f.shared).length} fields shared</p>
+              <p className="text-[15px] font-semibold">
+                <span key={cur.fields.filter((f) => f.shared).length} className="jelly inline-block">{cur.fields.filter((f) => f.shared).length}</span> fields shared
+              </p>
 
               <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-x-[22px] gap-y-3.5">
                 {cur.fields.map((f, i) => (
@@ -125,35 +127,35 @@ export function ShellieEditor() {
               </div>
 
               <div className="mt-2 flex flex-wrap gap-3.5">
-                <button type="submit" className="h-[60px] flex-[1_1_180px] rounded-[18px] bg-sky text-xl font-bold text-navy">Save</button>
+                <button type="submit" className="bubbly h-[60px] flex-[1_1_180px] rounded-[18px] bg-sky text-xl font-bold text-navy">Save</button>
                 <button
                   type="button"
                   onClick={() => {
                     setDraft(clone(saved));
                     setStatus("");
                   }}
-                  className="h-[60px] flex-[1_1_180px] rounded-[18px] border-[3px] border-[#E86A6A] bg-[#F4D6DC] text-xl font-bold text-crimson"
+                  className="bubbly h-[60px] flex-[1_1_180px] rounded-[18px] border-[3px] border-[#E86A6A] bg-[#F4D6DC] text-xl font-bold text-crimson"
                 >
                   Cancel
                 </button>
               </div>
               {status && (
-                <p role="status" className="rounded-[14px] bg-white px-4 py-3 text-[15px] font-semibold">{status}</p>
+                <p role="status" className="pop rounded-[14px] bg-white px-4 py-3 text-[15px] font-semibold">{status}</p>
               )}
             </form>
 
             <div className="flex min-w-0 flex-[1_1_320px] flex-col gap-[18px]">
               <section aria-labelledby="pv-h" className="relative overflow-hidden rounded-[36px] bg-blush p-6 text-maroon">
-                <div aria-hidden className="absolute -right-[50px] -top-[60px] h-[150px] w-[150px] rounded-full bg-coral" />
+                <div aria-hidden className="float absolute -right-[50px] -top-[60px] h-[150px] w-[150px] rounded-full bg-coral" />
                 <p id="pv-h" className="relative text-[13px] font-bold uppercase tracking-[0.06em] text-wine">Live preview · what a finder sees</p>
                 <div className="relative mt-[18px] flex items-center gap-3">
-                  <span aria-hidden className="h-[54px] w-[54px] flex-none rounded-full border-4 border-white" style={{ background: colorHex(cur.color) }} />
+                  <span key={`${cur.tagId}-${cur.color}`} aria-hidden className="pop h-[54px] w-[54px] flex-none rounded-full border-4 border-white" style={{ background: colorHex(cur.color) }} />
                   <span className="font-display text-[28px] font-extrabold leading-none tracking-[-0.02em]">{cur.name}&apos;s Shellie</span>
                 </div>
                 <div className="relative mt-4 rounded-[22px] bg-white px-[18px] py-1.5">
                   {rows.length === 0 && <p className="py-3.5 text-[15px]">Nothing is shared yet. Switch on a field to show it.</p>}
                   {rows.map((r) => (
-                    <div key={r.label} className="flex justify-between gap-3.5 border-b-2 border-blush py-[11px] text-[15px] last:border-b-0">
+                    <div key={r.label} className="pop flex justify-between gap-3.5 border-b-2 border-blush py-[11px] text-[15px] last:border-b-0">
                       <span className="text-wine">{r.label}</span>
                       <span className="text-right font-semibold [overflow-wrap:anywhere]">{r.value}</span>
                     </div>

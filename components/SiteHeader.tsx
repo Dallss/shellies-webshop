@@ -5,20 +5,40 @@ import { useCart } from "@/lib/cart";
 import { BagIcon, Crab } from "./art";
 
 const LINKS = [
-  { href: "/#how", label: "How it works" },
-  { href: "/#privacy", label: "Privacy" },
-  { href: "/#shop", label: "Shop" },
+  { href: "/", label: "Home" },
+  { href: "/shop", label: "Shop" },
   { href: "/news", label: "News" },
 ];
 
 export function SiteHeader({ tone = "light", current }: { tone?: "light" | "blue"; current?: string }) {
+  if (tone === "light") {
+    return (
+      <header className="relative z-10 text-ink">
+        <HeaderBar blue={false} current={current} />
+      </header>
+    );
+  }
+
+  // Blue header: the light header stays in place underneath, and the blue
+  // version grows over it from the center, so the text never disappears.
+  return (
+    <header className="relative z-10">
+      <div aria-hidden inert className="text-ink">
+        <HeaderBar blue={false} current={current} />
+      </div>
+      <div className="nav-bubble absolute inset-0 bg-navy text-white">
+        <HeaderBar blue current={current} />
+      </div>
+    </header>
+  );
+}
+
+function HeaderBar({ blue, current }: { blue: boolean; current?: string }) {
   const { count } = useCart();
-  const blue = tone === "blue";
 
   return (
-    <header className={blue ? "bg-navy text-white" : "relative z-10 text-ink"}>
       <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 px-6 py-5">
-        <Link href="/" className="flex items-center gap-2.5 no-underline">
+        <Link href="/" className="wiggle-host flex items-center gap-2.5 no-underline">
           <Crab smile className="h-[34px] w-[44px]" />
           <span className="font-display text-2xl font-extrabold tracking-tight">Perle &amp; Co.</span>
         </Link>
@@ -29,7 +49,7 @@ export function SiteHeader({ tone = "light", current }: { tone?: "light" | "blue
               key={l.href}
               href={l.href}
               aria-current={current === l.href ? "page" : undefined}
-              className={`no-underline ${blue ? (current === l.href ? "font-bold text-white" : "text-sky") : "text-ink"}`}
+              className={`nav-link no-underline ${blue ? (current === l.href ? "font-bold text-white" : "text-sky") : current === l.href ? "font-bold text-navy" : "text-ink"}`}
             >
               {l.label}
             </Link>
@@ -39,21 +59,22 @@ export function SiteHeader({ tone = "light", current }: { tone?: "light" | "blue
         <div className="flex flex-wrap gap-3">
           <Link
             href="/my-shellies"
-            className={`inline-flex h-12 items-center rounded-2xl border-[2.5px] px-5 font-semibold no-underline ${blue ? "border-sky text-sky" : "border-red text-red"}`}
+            className={`bubbly inline-flex h-12 items-center rounded-2xl border-[2.5px] px-5 font-semibold no-underline ${blue ? "border-sky text-sky" : "border-red text-red"}`}
           >
             Log in
           </Link>
           <Link
-            href="/#cart"
+            href="/shop#cart"
             aria-label={`Cart, ${count} items`}
-            className={`inline-flex h-12 items-center gap-2.5 rounded-2xl px-[18px] font-bold no-underline ${blue ? "bg-sky text-navy" : "bg-navy text-sky"}`}
+            className={`bubbly inline-flex h-12 items-center gap-2.5 rounded-2xl px-[18px] font-bold no-underline ${blue ? "bg-sky text-navy" : "bg-navy text-sky"}`}
           >
             <BagIcon className="h-[22px] w-[22px]" />
-            <span>{count}</span>
+            <span key={count} className={count > 0 ? "jelly" : undefined}>
+              {count}
+            </span>
           </Link>
         </div>
       </div>
-    </header>
   );
 }
 

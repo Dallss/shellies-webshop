@@ -59,7 +59,7 @@ export default function ListingsPage() {
         }
       />
 
-      <div className="flex flex-wrap items-start gap-6">
+      <div className="rise rise-2 flex flex-wrap items-start gap-6">
         <div className="grid min-w-0 flex-[999_1_480px] grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
           {products.map((p) => {
             const st = stateOf(p);
@@ -68,21 +68,21 @@ export default function ListingsPage() {
                 key={p.id}
                 type="button"
                 onClick={() => setSelId(p.id)}
-                className={`flex flex-col items-center gap-2 rounded-[28px] border-[3px] bg-white p-[18px] ${p.id === selId ? "border-navy" : "border-transparent"} ${p.shown ? "" : "opacity-60"}`}
+                className={`lift wiggle-host flex flex-col items-center gap-2 rounded-[28px] border-[3px] bg-white p-[18px] ${p.id === selId ? "border-navy" : "border-transparent"} ${p.shown ? "" : "opacity-60"}`}
               >
                 <Bracelet hex={p.hex} className="w-full max-w-[150px]" />
                 <span className="text-[19px] font-bold">{p.name}</span>
                 <span className="text-[15px]">
                   {formatPeso(p.price)} · {p.stock} in stock
                 </span>
-                <Pill className={`py-1! text-xs! ${st.className}`}>{st.label}</Pill>
+                <Pill key={st.label} className={`pop py-1! text-xs! ${st.className}`}>{st.label}</Pill>
               </button>
             );
           })}
         </div>
 
         {sel && (
-          <form aria-label="Edit listing" onSubmit={(e) => e.preventDefault()} className="flex min-w-0 flex-[1_1_340px] flex-col gap-3.5 rounded-[32px] bg-periwinkle p-[26px]">
+          <form key={sel.id} aria-label="Edit listing" onSubmit={(e) => e.preventDefault()} className="pop flex min-w-0 flex-[1_1_340px] flex-col gap-3.5 rounded-[32px] bg-periwinkle p-[26px]">
             <h2 className="font-display text-[28px] font-extrabold tracking-[-0.02em]">Edit {sel.name}</h2>
             <div className="flex flex-col gap-1.5">
               <label htmlFor="l-name" className={labelClass}>Name</label>
@@ -108,7 +108,7 @@ export default function ListingsPage() {
                     aria-label={name}
                     aria-pressed={sel.hex === hex}
                     onClick={() => patch({ hex })}
-                    className="h-11 w-11 rounded-full border-4 border-white"
+                    className="bubbly h-11 w-11 rounded-full border-4 border-white"
                     style={{ background: hex, boxShadow: sel.hex === hex ? "0 0 0 3px #0B2A5B" : undefined }}
                   />
                 ))}

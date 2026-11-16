@@ -17,7 +17,7 @@ export function AdminSidebar() {
 
   return (
     <aside className="flex min-w-0 flex-[1_1_240px] flex-col gap-7 bg-navy px-5 py-7 text-white">
-      <div className="flex items-center gap-2.5">
+      <div className="wiggle-host flex items-center gap-2.5">
         <Crab className="h-8 w-[42px]" />
         <span className="flex flex-col">
           <span className="font-display text-[22px] font-extrabold leading-none">Perle &amp; Co.</span>
@@ -32,11 +32,11 @@ export function AdminSidebar() {
               key={n.href}
               href={n.href}
               aria-current={on ? "page" : undefined}
-              className={`flex h-[52px] items-center justify-between gap-3 rounded-2xl px-4 no-underline ${on ? "bg-periwinkle font-bold text-ink" : "font-medium text-sky"}`}
+              className={`nav-link flex h-[52px] items-center justify-between gap-3 rounded-2xl px-4 no-underline ${on ? "bg-periwinkle font-bold text-ink" : "font-medium text-sky"}`}
             >
               <span>{n.label}</span>
               {n.badge > 0 && (
-                <span className="inline-flex h-[26px] min-w-[26px] items-center justify-center rounded-full bg-coral px-2 text-[13px] font-bold text-white">{n.badge}</span>
+                <span key={n.badge} className="jelly inline-flex h-[26px] min-w-[26px] items-center justify-center rounded-full bg-coral px-2 text-[13px] font-bold text-white">{n.badge}</span>
               )}
             </Link>
           );

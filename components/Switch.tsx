@@ -8,10 +8,10 @@ export function Switch({ checked, onChange, label }: { checked: boolean; onChang
       aria-checked={checked}
       aria-label={label}
       onClick={onChange}
-      className={`relative h-[34px] w-[60px] flex-none rounded-full border-[3px] border-ink transition-colors ${checked ? "bg-ink" : "bg-transparent"}`}
+      className={`relative h-[34px] w-[60px] flex-none rounded-full border-[3px] border-ink transition-colors duration-300 ${checked ? "bg-ink" : "bg-transparent"}`}
     >
       <span
-        className={`absolute top-[3px] h-[22px] w-[22px] rounded-full transition-all ${checked ? "left-[29px] bg-white" : "left-[3px] bg-ink"}`}
+        className={`absolute top-[3px] h-[22px] w-[22px] rounded-full transition-[left,background-color] duration-500 ease-[var(--ease-bubble)] ${checked ? "left-[29px] bg-white" : "left-[3px] bg-ink"}`}
       />
     </button>
   );

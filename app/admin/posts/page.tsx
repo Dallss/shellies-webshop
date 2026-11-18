@@ -3,14 +3,11 @@
 import { useState } from "react";
 import { PageTitle, Pill, Toast, coralBtn, dangerBtn, labelClass, primaryBtn, revealIfOffscreen } from "@/components/admin/ui";
 import { useAdmin } from "@/lib/admin-store";
-import type { PostCategory } from "@/lib/data";
+import { POST_CATEGORIES, type PostCategory } from "@/lib/data";
+import { deletePostAction, savePostAction } from "../actions";
 
-const CATEGORIES: PostCategory[] = ["News", "New drop", "Tips"];
+const CATEGORIES = POST_CATEGORIES;
 const EMPTY = { title: "", category: "News" as PostCategory, body: "" };
-
-function today() {
-  return new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
 
 export default function PostsPage() {
   const { posts, setPosts } = useAdmin();
@@ -18,6 +15,7 @@ export default function PostsPage() {
   const [draft, setDraft] = useState(EMPTY);
   const [missing, setMissing] = useState(false);
   const [toast, setToast] = useState("");
+  const [busy, setBusy] = useState(false);
 
   function change(patch: Partial<typeof EMPTY>) {
     setDraft((d) => ({ ...d, ...patch }));
@@ -30,15 +28,15 @@ export default function PostsPage() {
       setMissing(true);
       return;
     }
-    const date = status === "published" ? today() : "Not published";
-    if (editingId) {
-      setPosts((ps) => ps.map((p) => (p.id === editingId ? { ...p, ...draft, status, date } : p)));
-    } else {
-      const id = `p-${Date.now()}`;
-      setPosts((ps) => [{ id, ...draft, status, date }, ...ps]);
-      setEditingId(id);
-    }
-    setToast(status === "published" ? "Published. It now shows on the News page." : "Draft saved.");
+    setBusy(true);
+    savePostAction({ id: editingId ?? undefined, ...draft, status })
+      .then((post) => {
+        setPosts((ps) => (editingId ? ps.map((p) => (p.id === editingId ? post : p)) : [post, ...ps]));
+        setEditingId(post.id);
+        setToast(status === "published" ? "Published. It now shows on the News page." : "Draft saved. It's hidden from the News page.");
+      })
+      .catch(() => setToast("Couldn't save the post. Check your connection and try again."))
+      .finally(() => setBusy(false));
   }
 
   return (
@@ -120,21 +118,30 @@ export default function PostsPage() {
           </div>
           {missing && <p className="jelly text-sm font-semibold text-crimson">Add a title and some text before publishing.</p>}
           <div className="flex flex-wrap gap-2.5">
-            <button type="button" onClick={() => save("published")} className={`flex-[1_1_180px] ${primaryBtn}`}>
+            <button type="button" disabled={busy} onClick={() => save("published")} className={`flex-[1_1_180px] disabled:opacity-60 ${primaryBtn}`}>
               Publish
             </button>
-            <button type="button" onClick={() => save("draft")} className="bubbly h-14 flex-[1_1_160px] rounded-[18px] bg-sky text-[17px] font-bold text-navy">
+            <button type="button" disabled={busy} onClick={() => save("draft")} className="disabled:opacity-60 bubbly h-14 flex-[1_1_160px] rounded-[18px] bg-sky text-[17px] font-bold text-navy">
               Save as draft
             </button>
             {editingId && (
               <button
                 type="button"
                 className={dangerBtn}
+                disabled={busy}
                 onClick={() => {
-                  setPosts((ps) => ps.filter((p) => p.id !== editingId));
-                  setEditingId(null);
-                  setDraft(EMPTY);
-                  setToast("Post deleted.");
+                  const id = editingId;
+                  if (!window.confirm("Delete this post? This can't be undone.")) return;
+                  setBusy(true);
+                  deletePostAction(id)
+                    .then(() => {
+                      setPosts((ps) => ps.filter((p) => p.id !== id));
+                      setEditingId(null);
+                      setDraft(EMPTY);
+                      setToast("Post deleted.");
+                    })
+                    .catch(() => setToast("Couldn't delete the post. Try again."))
+                    .finally(() => setBusy(false));
                 }}
               >
                 Delete

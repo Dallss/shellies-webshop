@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { revealIfOffscreen } from "@/components/admin/ui";
-import { orderTotal, useAdmin } from "@/lib/admin-store";
+import { useAdmin } from "@/lib/admin-store";
+import { refreshOrdersAction, setOrderStatusAction } from "../actions";
 import { ORDER_STEPS, type Order, type OrderStatus, formatPeso } from "@/lib/data";
 
 // A plain, table-first view for running the shop: scan, filter, act.
@@ -45,21 +46,21 @@ function StatusBadge({ status }: { status: OrderStatus }) {
 }
 
 export default function OrdersPage() {
-  const { orders, setOrders, products } = useAdmin();
+  const { orders, setOrders } = useAdmin();
   const [tab, setTab] = useState<"all" | OrderStatus>("all");
   const [query, setQuery] = useState("");
   const [selId, setSelId] = useState<string | undefined>(orders[0]?.id);
   const [notice, setNotice] = useState("");
+  const [pending, startTransition] = useTransition();
 
-  const product = (id: string) => products.find((p) => p.id === id) ?? { name: "Removed Shellie", hex: "#ccc", price: 0 };
-  const itemSummary = (o: Order) => o.items.map((it) => `${it.qty} × ${product(it.productId).name}`).join(", ");
+  const itemSummary = (o: Order) => o.items.map((it) => `${it.qty} × ${it.name}`).join(", ");
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     return orders.filter(
       (o) =>
         (tab === "all" || o.status === tab) &&
-        (!q || [o.id, o.name, o.city, o.phone].some((v) => v.toLowerCase().includes(q))),
+        (!q || [o.id, o.name, o.city, o.phone, o.email].some((v) => v.toLowerCase().includes(q))),
     );
   }, [orders, tab, query]);
 
@@ -69,12 +70,31 @@ export default function OrdersPage() {
     { label: "Awaiting confirmation", value: String(orders.filter((o) => o.status === "new").length) },
     { label: "To pack or ship", value: String(orders.filter((o) => o.status === "confirmed" || o.status === "packed").length) },
     { label: "Units sold", value: String(live.reduce((a, o) => a + o.items.reduce((b, it) => b + it.qty, 0), 0)) },
-    { label: "Gross sales", value: formatPeso(live.reduce((a, o) => a + orderTotal(o, products), 0)) },
+    { label: "Gross sales", value: formatPeso(live.reduce((a, o) => a + o.total, 0)) },
   ];
 
   function setStatus(id: string, status: OrderStatus) {
-    setOrders((os) => os.map((o) => (o.id === id ? { ...o, status } : o)));
-    setNotice(status === "cancelled" ? `Order ${id} was cancelled.` : `Order ${id} marked as ${LABEL[status].toLowerCase()}.`);
+    startTransition(async () => {
+      try {
+        const updated = await setOrderStatusAction(id, status);
+        setOrders((os) => os.map((o) => (o.id === id ? updated : o)));
+        setNotice(status === "cancelled" ? `Order ${id} was cancelled.` : `Order ${id} marked as ${LABEL[status].toLowerCase()}.`);
+      } catch {
+        setNotice(`Couldn't update order ${id}. Check your connection and try again.`);
+      }
+    });
+  }
+
+  function refresh() {
+    startTransition(async () => {
+      try {
+        const fresh = await refreshOrdersAction();
+        setOrders(fresh);
+        setNotice("Orders are up to date.");
+      } catch {
+        setNotice("Couldn't load new orders. Try again.");
+      }
+    });
   }
 
   function select(id: string) {
@@ -91,7 +111,17 @@ export default function OrdersPage() {
           <h1 className="text-2xl font-semibold sm:text-[28px] tracking-[-0.01em] text-ink">Orders</h1>
           <p className="mt-1 text-[15px] text-[#5B6578]">Review incoming orders and update their fulfilment status.</p>
         </div>
-        <p className="text-sm text-[#5B6578]">{orders.length} orders in total</p>
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-[#5B6578]">{orders.length} orders in total</p>
+          <button
+            type="button"
+            onClick={refresh}
+            disabled={pending}
+            className="h-10 rounded-lg border border-[#DCE2EC] bg-white px-3 text-sm font-medium text-ink transition-colors hover:bg-[#F1F4F9] disabled:opacity-60"
+          >
+            {pending ? "Working…" : "Refresh"}
+          </button>
+        </div>
       </header>
 
       {notice && (
@@ -147,7 +177,7 @@ export default function OrdersPage() {
         {/* Orders table */}
         <section aria-label="Orders" className="min-w-0 flex-[999_1_min(560px,100%)] overflow-hidden rounded-lg border border-[#DCE2EC] bg-white">
           <ul className="divide-y divide-[#E8ECF2] sm:hidden">
-            {shown.length === 0 && <li className="px-4 py-10 text-center text-[#5B6578]">No orders match this filter.</li>}
+            {shown.length === 0 && <li className="px-4 py-10 text-center text-[#5B6578]">{orders.length ? "No orders match this filter." : "No orders yet. They show up here when shoppers check out."}</li>}
             {shown.map((o) => {
               const on = o.id === selId;
               return (
@@ -164,7 +194,7 @@ export default function OrdersPage() {
                     </span>
                     <span className="flex items-baseline justify-between gap-3">
                       <span className="min-w-0 truncate font-medium">{o.name} <span className="font-normal text-[#5B6578]">· {o.city}</span></span>
-                      <span className="flex-none font-semibold tabular-nums">{formatPeso(orderTotal(o, products))}</span>
+                      <span className="flex-none font-semibold tabular-nums">{formatPeso(o.total)}</span>
                     </span>
                     <span className="text-[13px] text-[#5B6578]">{o.placed} · {itemSummary(o)} · {o.payment}</span>
                   </button>
@@ -189,7 +219,7 @@ export default function OrdersPage() {
                 {shown.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-10 text-center text-[#5B6578]">
-                      No orders match this filter.
+                      {orders.length ? "No orders match this filter." : "No orders yet. They show up here when shoppers check out."}
                     </td>
                   </tr>
                 )}
@@ -214,7 +244,7 @@ export default function OrdersPage() {
                       </td>
                       <td className="px-4 py-3 text-[#3A4456]">{itemSummary(o)}</td>
                       <td className="whitespace-nowrap px-4 py-3 text-[#3A4456]">{o.payment}</td>
-                      <td className="px-4 py-3 text-right font-medium tabular-nums">{formatPeso(orderTotal(o, products))}</td>
+                      <td className="px-4 py-3 text-right font-medium tabular-nums">{formatPeso(o.total)}</td>
                       <td className="px-4 py-3">
                         <StatusBadge status={o.status} />
                       </td>
@@ -258,6 +288,8 @@ export default function OrdersPage() {
             <dl className="grid grid-cols-[84px_minmax(0,1fr)] gap-x-4 sm:grid-cols-[110px_minmax(0,1fr)] gap-y-2.5 border-b border-[#E8ECF2] px-5 py-4 text-sm">
               <dt className="text-[#5B6578]">Customer</dt>
               <dd className="font-medium">{order.name}</dd>
+              <dt className="text-[#5B6578]">Email</dt>
+              <dd className="break-all">{order.email}</dd>
               <dt className="text-[#5B6578]">Phone</dt>
               <dd className="tabular-nums">{order.phone}</dd>
               <dt className="text-[#5B6578]">Ship to</dt>
@@ -277,8 +309,8 @@ export default function OrdersPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {order.items.map((it) => {
-                    const p = product(it.productId);
+                  {order.items.map((p) => {
+                    const it = p;
                     return (
                       <tr key={it.productId} className="border-b border-[#F0F2F6] last:border-b-0">
                         <td className="py-2">
@@ -300,7 +332,7 @@ export default function OrdersPage() {
                     <th scope="row" colSpan={2} className="pt-3 text-left font-semibold">
                       Total
                     </th>
-                    <td className="pt-3 text-right font-semibold tabular-nums">{formatPeso(orderTotal(order, products))}</td>
+                    <td className="pt-3 text-right font-semibold tabular-nums">{formatPeso(order.total)}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -318,6 +350,7 @@ export default function OrdersPage() {
                 <button
                   type="button"
                   onClick={() => setStatus(order.id, ORDER_STEPS[stepIdx + 1])}
+                  disabled={pending}
                   className="h-11 flex-1 whitespace-nowrap rounded-lg bg-navy px-4 sm:h-10 text-sm font-semibold text-white transition-colors hover:bg-ink"
                 >
                   {NEXT_ACTION[order.status]}
@@ -327,6 +360,7 @@ export default function OrdersPage() {
                 <button
                   type="button"
                   onClick={() => setStatus(order.id, "cancelled")}
+                  disabled={pending}
                   className="h-11 whitespace-nowrap rounded-lg border border-[#E3B4B2] sm:h-10 bg-white px-4 text-sm font-semibold text-[#A11410] transition-colors hover:bg-[#FDF3F3]"
                 >
                   Cancel order

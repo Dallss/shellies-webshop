@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PageTitle, Pill, Toast, coralBtn, dangerBtn, inputClass, labelClass, revealIfOffscreen } from "@/components/admin/ui";
 import { ProductPhoto } from "@/components/ProductPhoto";
 import { Switch } from "@/components/Switch";
 import { useAdmin } from "@/lib/admin-store";
 import { type Product, formatPeso } from "@/lib/data";
+import { createProductAction, deleteProductAction, removeProductPhotoAction, setProductPhotoAction, updateProductAction } from "../actions";
+
+type Editable = Partial<Pick<Product, "name" | "hex" | "tint" | "price" | "stock" | "shown" | "description">>;
 
 const SWATCHES = [
   ["Gold", "#C9973A"],
@@ -27,13 +30,46 @@ function stateOf(p: Product) {
 
 export default function ListingsPage() {
   const { products, setProducts } = useAdmin();
-  const [selId, setSelId] = useState<string | null>("honey");
+  const [selId, setSelId] = useState<string | null>(products[0]?.id ?? null);
   const [toast, setToast] = useState("");
+  const [saveState, setSaveState] = useState<"" | "saving" | "saved" | "error">("");
+  const [busy, setBusy] = useState(false);
   const sel = products.find((p) => p.id === selId);
 
-  function patch(changes: Partial<Product>) {
+  // Field edits show immediately and are saved together shortly after typing stops.
+  const queued = useRef(new Map<string, Editable>());
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function flush() {
+    timer.current = null;
+    const batch = [...queued.current];
+    queued.current.clear();
+    if (!batch.length) return;
+    setSaveState("saving");
+    Promise.all(batch.map(([id, changes]) => updateProductAction(id, changes)))
+      .then(() => setSaveState(queued.current.size ? "saving" : "saved"))
+      .catch(() => setSaveState("error"));
+  }
+
+  function patch(changes: Editable) {
+    if (!selId) return;
     setProducts((ps) => ps.map((p) => (p.id === selId ? { ...p, ...changes } : p)));
+    queued.current.set(selId, { ...queued.current.get(selId), ...changes });
+    setSaveState("saving");
     setToast("");
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(flush, 700);
+  }
+
+  async function run<T>(work: () => Promise<T>, failMsg: string) {
+    setBusy(true);
+    try {
+      return await work();
+    } catch (e) {
+      setToast(e instanceof Error && e.message && !e.message.includes("digest") ? e.message : failMsg);
+    } finally {
+      setBusy(false);
+    }
   }
   const num = (v: string) => Math.max(0, parseInt(v, 10) || 0);
 
@@ -47,10 +83,12 @@ export default function ListingsPage() {
           <button
             type="button"
             className={coralBtn}
-            onClick={() => {
-              const id = `new-${Date.now()}`;
-              setProducts((ps) => [...ps, { id, name: "New Shellie", hex: "#C985DB", tint: "#F1E4F5", price: 149, stock: 0, shown: false, description: "" }]);
-              setSelId(id);
+            disabled={busy}
+            onClick={async () => {
+              const p = await run(createProductAction, "Couldn't add a listing. Try again.");
+              if (!p) return;
+              setProducts((ps) => [...ps, p]);
+              setSelId(p.id);
               revealIfOffscreen("listing-editor");
               setToast("New listing added. It stays hidden until you switch on Show in the shop.");
             }}
@@ -87,7 +125,12 @@ export default function ListingsPage() {
 
         {sel && (
           <form key={sel.id} id="listing-editor" aria-label="Edit listing" onSubmit={(e) => e.preventDefault()} className="pop flex min-w-0 flex-[1_1_min(340px,100%)] scroll-mt-4 flex-col gap-3.5 rounded-[28px] bg-periwinkle p-5 sm:rounded-[32px] sm:p-[26px]">
-            <h2 className="font-display text-[28px] font-extrabold tracking-[-0.02em]">Edit {sel.name}</h2>
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="font-display text-[28px] font-extrabold tracking-[-0.02em]">Edit {sel.name}</h2>
+              <span aria-live="polite" className={`text-sm font-semibold ${saveState === "error" ? "text-crimson" : "text-muted"}`}>
+                {saveState === "saving" ? "Saving…" : saveState === "saved" ? "All changes saved" : saveState === "error" ? "Couldn't save. Try again." : ""}
+              </span>
+            </div>
             <div className="flex flex-col gap-2">
               <span className={labelClass}>Photo</span>
               <div className="flex items-center gap-4 rounded-2xl bg-sky p-3">
@@ -96,38 +139,44 @@ export default function ListingsPage() {
                 </span>
                 <div className="flex min-w-0 flex-col gap-2">
                   <label htmlFor="l-photo" className="bubbly inline-flex h-11 cursor-pointer items-center justify-center rounded-[14px] bg-navy px-4 text-[15px] font-bold text-white">
-                    {sel.image ? "Replace photo" : "Upload photo"}
+                    {busy ? "Working…" : sel.image ? "Replace photo" : "Upload photo"}
                   </label>
                   <input
                     id="l-photo"
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
                     className="sr-only"
-                    onChange={(e) => {
+                    disabled={busy}
+                    onChange={async (e) => {
                       const file = e.target.files?.[0];
                       e.target.value = "";
                       if (!file) return;
-                      if (file.size > 5 * 1024 * 1024) {
-                        setToast("That photo is over 5 MB. Choose a smaller one.");
+                      if (file.size > 4 * 1024 * 1024) {
+                        setToast("That photo is over 4 MB. Choose a smaller one.");
                         return;
                       }
-                      if (sel.image?.startsWith("blob:")) URL.revokeObjectURL(sel.image);
-                      patch({ image: URL.createObjectURL(file) });
+                      const form = new FormData();
+                      form.set("photo", file);
+                      const id = sel.id;
+                      const p = await run(() => setProductPhotoAction(id, form), "Couldn't upload that photo. Try again.");
+                      if (p) setProducts((ps) => ps.map((x) => (x.id === id ? { ...x, image: p.image } : x)));
                     }}
                   />
                   {sel.image ? (
                     <button
                       type="button"
-                      onClick={() => {
-                        if (sel.image?.startsWith("blob:")) URL.revokeObjectURL(sel.image);
-                        patch({ image: undefined });
+                      disabled={busy}
+                      onClick={async () => {
+                        const id = sel.id;
+                        const p = await run(() => removeProductPhotoAction(id), "Couldn't remove the photo. Try again.");
+                        if (p) setProducts((ps) => ps.map((x) => (x.id === id ? { ...x, image: null } : x)));
                       }}
                       className="text-left text-sm font-semibold text-crimson"
                     >
                       Remove photo
                     </button>
                   ) : (
-                    <span className="text-[13px] text-muted">JPG, PNG or WebP, up to 5 MB. Square photos look best.</span>
+                    <span className="text-[13px] text-muted">JPG, PNG or WebP, up to 4 MB. Square photos look best.</span>
                   )}
                 </div>
               </div>
@@ -173,11 +222,17 @@ export default function ListingsPage() {
             <button
               type="button"
               className={dangerBtn}
-              onClick={() => {
-                const rest = products.filter((p) => p.id !== sel.id);
+              disabled={busy}
+              onClick={async () => {
+                const { id, name } = sel;
+                if (!window.confirm(`Remove ${name} from your listings? Past orders keep their details.`)) return;
+                queued.current.delete(id);
+                const ok = await run(async () => (await deleteProductAction(id), true), "Couldn't remove that listing. Try again.");
+                if (!ok) return;
+                const rest = products.filter((p) => p.id !== id);
                 setProducts(rest);
                 setSelId(rest[0]?.id ?? null);
-                setToast(`${sel.name} was removed from your listings.`);
+                setToast(`${name} was removed from your listings.`);
               }}
             >
               Remove this listing

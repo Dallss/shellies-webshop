@@ -3,7 +3,7 @@ import { Bracelet, Crab, NfcIcon } from "@/components/art";
 import { ProductPhoto } from "@/components/ProductPhoto";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { BubbleField } from "@/components/BubbleField";
-import { PRODUCTS } from "@/lib/data";
+import { listProducts } from "@/lib/db";
 
 const STEPS = [
   { n: 1, title: "Set up your Shellie", body: "Add a name, a contact number and anything else you want a helper to know.", card: "bg-white", badge: "bg-sky text-navy", text: "text-muted" },
@@ -18,7 +18,10 @@ const PREVIEW_FIELDS: { label: string; value: string; on: boolean; demo?: boolea
   { label: "Instagram", value: "@anne.reyes", on: false, demo: true },
 ];
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const products = await listProducts({ onlyShown: true });
   return (
     <div className="relative overflow-hidden">
       <SiteHeader current="/" />
@@ -141,7 +144,7 @@ export default function Home() {
           </Link>
         </div>
         <div className="reveal mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:grid-cols-[repeat(auto-fit,minmax(170px,1fr))] sm:gap-5">
-          {PRODUCTS.filter((p) => p.shown).map((p, i) => (
+          {products.map((p, i) => (
             <Link key={p.id} href="/shop" className="lift wiggle-host flex flex-col items-center gap-2 rounded-[24px] bg-white px-3 pb-4 pt-4 no-underline sm:rounded-[28px] sm:px-4 sm:pb-[22px] sm:pt-5">
               <span className="bob block w-full max-w-[170px]" style={{ animationDelay: `${i * -0.6}s` }}>
                 <ProductPhoto product={p} />

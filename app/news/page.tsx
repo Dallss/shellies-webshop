@@ -3,12 +3,13 @@ import Link from "next/link";
 import { Bracelet, Crab } from "@/components/art";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TAB_BAR_SPACE } from "@/components/TabBar";
-import { PRODUCTS, SAMPLE_POSTS } from "@/lib/data";
+import { listPosts, listProducts } from "@/lib/db";
 
 export const metadata: Metadata = { title: "News & notes" };
+export const dynamic = "force-dynamic";
 
-export default function NewsPage() {
-  const posts = SAMPLE_POSTS.filter((p) => p.status === "published");
+export default async function NewsPage() {
+  const [posts, products] = await Promise.all([listPosts({ onlyPublished: true }), listProducts({ onlyShown: true })]);
   const [featured, ...rest] = posts;
 
   return (
@@ -29,7 +30,7 @@ export default function NewsPage() {
         <section className="rise rise-4 mx-auto max-w-[1240px] px-5 py-4 sm:px-6">
           <article className="flex flex-wrap overflow-hidden rounded-[32px] bg-navy text-white sm:rounded-[40px]">
             <div className="flex min-h-56 min-w-0 flex-[1_1_min(420px,100%)] flex-wrap items-center justify-center gap-1 bg-sky p-6 sm:min-h-80 sm:p-8">
-              {PRODUCTS.map((p) => (
+              {products.map((p) => (
                 <Bracelet key={p.id} hex={p.hex} className="bob w-[30%] max-w-40" />
               ))}
             </div>

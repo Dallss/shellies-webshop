@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
-import { DEMO_CUSTOMER, ORDER_STEPS, PRODUCTS, SAMPLE_ORDERS, formatPeso, type Order, type OrderStatus } from "@/lib/data";
+import { ORDER_STEPS, formatPeso, type Order, type OrderStatus } from "@/lib/data";
 import { useSession } from "@/lib/session";
 
 const STEP_LABEL: Record<(typeof ORDER_STEPS)[number], string> = {
@@ -24,17 +22,10 @@ const STATUS_LINE: Record<OrderStatus, string> = {
   cancelled: "This order was cancelled.",
 };
 
-const product = (id: string) => PRODUCTS.find((p) => p.id === id) ?? { name: "Shellie", hex: "#ccc", price: 0 };
-const total = (o: Order) => o.items.reduce((a, it) => a + product(it.productId).price * it.qty, 0);
 const isOpen = (o: Order) => o.status !== "delivered" && o.status !== "cancelled";
 
-export function AccountView() {
-  const { status, user, signOut } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status === "unauthenticated") router.replace("/login?next=/account");
-  }, [status, router]);
+export function AccountView({ orders, justPlaced }: { orders: Order[]; justPlaced: string | null }) {
+  const { user, signOut } = useSession();
 
   if (!user) {
     return (
@@ -46,9 +37,6 @@ export function AccountView() {
     );
   }
 
-  // Sample data has no account ids yet, so the sample shopper's orders are matched by phone.
-  // With real login, fetch the orders that belong to the signed-in account instead.
-  const orders = SAMPLE_ORDERS.filter((o) => o.phone === DEMO_CUSTOMER.phone);
   const active = orders.filter(isOpen);
   const past = orders.filter((o) => !isOpen(o));
   const firstName = user.name.split(" ")[0];
@@ -75,6 +63,13 @@ export function AccountView() {
             </button>
           </p>
         </header>
+
+        {justPlaced && (
+          <div role="status" className="pop rounded-[28px] bg-navy p-6 text-white sm:p-8">
+            <p className="font-display text-[28px] font-extrabold leading-tight tracking-[-0.02em]">Thank you! Order {justPlaced} is in.</p>
+            <p className="mt-2 text-[17px] text-sky">We&apos;ll message you soon to confirm it and the shipping fee. You can follow its progress below.</p>
+          </div>
+        )}
 
         {orders.length === 0 ? (
           <div className="rise rise-4 rounded-[32px] bg-white p-10 text-center">
@@ -122,7 +117,7 @@ function OrderCard({ order }: { order: Order }) {
           </p>
           <p className="mt-1 text-lg font-bold">{STATUS_LINE[order.status]}</p>
         </div>
-        <p className="font-display text-[26px] font-extrabold">{formatPeso(total(order))}</p>
+        <p className="font-display text-[26px] font-extrabold">{formatPeso(order.total)}</p>
       </div>
 
       {!cancelled && (
@@ -146,7 +141,7 @@ function OrderCard({ order }: { order: Order }) {
 
       <ul className="flex flex-col rounded-[20px] bg-ice px-4 py-1.5">
         {order.items.map((it) => {
-          const p = product(it.productId);
+          const p = it;
           return (
             <li key={it.productId} className="flex items-center gap-3 border-b-2 border-white py-2.5 last:border-b-0">
               <span aria-hidden className="h-[30px] w-[30px] flex-none rounded-full border-[3px] border-white" style={{ background: p.hex }} />

@@ -1,24 +1,36 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Crab } from "@/components/art";
 import { ProductPhoto } from "@/components/ProductPhoto";
 import { useCart } from "@/lib/cart";
-import { PRODUCTS, formatPeso } from "@/lib/data";
+import { formatPeso, type Product } from "@/lib/data";
 
 const FEATURES = ["Adjustable cord, fits most wrists", "NFC tag, no battery to charge", "Edit what it shows any time"];
 
-export function ShopSection() {
-  const products = PRODUCTS.filter((p) => p.shown);
-  const { cart, add, remove, count } = useCart();
+export function ShopSection({ products }: { products: Product[] }) {
+  const { cart, add, remove } = useCart();
   const [selId, setSelId] = useState(products[0]?.id ?? "");
   const [qty, setQty] = useState(1);
-  const [checkoutMsg, setCheckoutMsg] = useState(false);
 
   const sel = products.find((p) => p.id === selId) ?? products[0];
-  const soldOut = sel.stock === 0;
   const lines = products.filter((p) => (cart[p.id] ?? 0) > 0);
   const subtotal = lines.reduce((a, p) => a + p.price * cart[p.id], 0);
+  const lineCount = lines.reduce((a, p) => a + cart[p.id], 0);
+  // How many more of a listing fit in the cart without going over what's in stock.
+  const room = (p: Product) => Math.max(0, p.stock - (cart[p.id] ?? 0));
+
+  if (!sel) {
+    return (
+      <section className="mx-auto max-w-[1240px] px-5 pb-24 pt-16 text-center sm:px-6">
+        <h1 className="font-display text-[clamp(42px,6vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-navy">Back soon!</h1>
+        <p className="mt-4 text-[19px]">We&apos;re restocking. Follow <a href="https://instagram.com/perle.and.company">@perle.and.company</a> for the next drop.</p>
+      </section>
+    );
+  }
+  const soldOut = sel.stock === 0;
+  const maxQty = room(sel);
 
   return (
     <>
@@ -80,20 +92,20 @@ export function ShopSection() {
                 <span aria-live="polite" className="min-w-7 text-center text-xl font-bold">
                   <span key={qty} className="jelly inline-block">{qty}</span>
                 </span>
-                <button type="button" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(20, q + 1))} className="bubbly h-[60px] w-[52px] text-[26px] font-bold">
+                <button type="button" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(Math.max(1, maxQty), 20, q + 1))} className="bubbly h-[60px] w-[52px] text-[26px] font-bold">
                   +
                 </button>
               </div>
               <button
                 type="button"
-                disabled={soldOut}
+                disabled={soldOut || maxQty === 0}
                 onClick={() => {
-                  add(sel.id, qty);
+                  add(sel.id, Math.min(qty, maxQty));
                   setQty(1);
                 }}
                 className="bubbly h-[60px] flex-[1_1_200px] rounded-[18px] bg-salmon text-[19px] font-bold text-maroon disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {soldOut ? "Sold out" : `Add to cart · ${formatPeso(sel.price * qty)}`}
+                {soldOut ? "Sold out" : maxQty === 0 ? "All in your cart" : `Add to cart · ${formatPeso(sel.price * Math.min(qty, maxQty))}`}
               </button>
             </div>
           </div>
@@ -121,7 +133,7 @@ export function ShopSection() {
                   <span className="inline-flex h-11 items-center rounded-xl bg-sky-2 px-4 font-bold text-navy">{formatPeso(p.price)}</span>
                   <button
                     type="button"
-                    disabled={p.stock === 0}
+                    disabled={room(p) === 0}
                     onClick={() => add(p.id, 1)}
                     aria-label={p.stock === 0 ? `${p.name} is sold out` : `Add ${p.name} to cart`}
                     className="bubbly h-11 w-11 rounded-xl bg-navy text-2xl font-semibold text-white disabled:opacity-40"
@@ -166,21 +178,17 @@ export function ShopSection() {
             </div>
             <div className="flex justify-between text-muted">
               <span>Shipping</span>
-              <span>Calculated at checkout</span>
+              <span>We&apos;ll confirm it with you</span>
             </div>
           </div>
-          <button
-            type="button"
-            disabled={count === 0}
-            onClick={() => setCheckoutMsg(true)}
-            className="bubbly h-[60px] rounded-[18px] bg-navy text-lg font-bold text-sky disabled:opacity-50"
-          >
-            Checkout
-          </button>
-          {checkoutMsg && (
-            <p role="status" className="pop rounded-2xl bg-blush px-4 py-3 text-sm text-maroon">
-              Online checkout is coming soon. For now, please order on our Instagram.
-            </p>
+          {lineCount > 0 ? (
+            <Link href="/checkout" className="bubbly flex h-[60px] items-center justify-center rounded-[18px] bg-navy text-lg font-bold text-sky no-underline">
+              Checkout
+            </Link>
+          ) : (
+            <button type="button" disabled className="h-[60px] rounded-[18px] bg-navy text-lg font-bold text-sky opacity-50">
+              Checkout
+            </button>
           )}
           <p className="text-center text-sm text-muted">
             Or order on our IG! <a href="https://instagram.com/perle.and.company">@perle.and.company</a>

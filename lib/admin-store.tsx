@@ -1,9 +1,11 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
-import { PRODUCTS, SAMPLE_ORDERS, SAMPLE_POSTS, type Order, type Post, type Product } from "./data";
+import type { Order, Post, Product } from "./data";
 
-// In-memory admin state. Swap for API calls when the backend is ready.
+// Admin screens' working copy of the shop data. The admin layout loads it from Supabase on the
+// server and passes it in; pages update it locally after each server action succeeds
+// (see app/admin/actions.ts), so the UI stays snappy without refetching everything.
 
 type AdminStore = {
   orders: Order[];
@@ -16,10 +18,16 @@ type AdminStore = {
 
 const Ctx = createContext<AdminStore | null>(null);
 
-export function AdminProvider({ children }: { children: React.ReactNode }) {
-  const [orders, setOrders] = useState(SAMPLE_ORDERS);
-  const [products, setProducts] = useState(PRODUCTS);
-  const [posts, setPosts] = useState(SAMPLE_POSTS);
+export function AdminProvider({
+  initial,
+  children,
+}: {
+  initial: { orders: Order[]; products: Product[]; posts: Post[] };
+  children: React.ReactNode;
+}) {
+  const [orders, setOrders] = useState(initial.orders);
+  const [products, setProducts] = useState(initial.products);
+  const [posts, setPosts] = useState(initial.posts);
   return <Ctx.Provider value={{ orders, setOrders, products, setProducts, posts, setPosts }}>{children}</Ctx.Provider>;
 }
 
@@ -27,8 +35,4 @@ export function useAdmin() {
   const ctx = useContext(Ctx);
   if (!ctx) throw new Error("useAdmin must be used inside AdminProvider");
   return ctx;
-}
-
-export function orderTotal(o: Order, products: Product[]) {
-  return o.items.reduce((a, it) => a + (products.find((p) => p.id === it.productId)?.price ?? 0) * it.qty, 0);
 }

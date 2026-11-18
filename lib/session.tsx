@@ -1,71 +1,45 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { DEMO_CUSTOMER } from "./data";
+import {
+  SessionProvider as AuthSessionProvider,
+  signIn as authSignIn,
+  signOut as authSignOut,
+  useSession as useAuthSession,
+} from "next-auth/react";
 
-// Stand-in for real login. Shoppers will sign in with Google or Facebook only; the shape here
-// (status / user / signIn(provider) / signOut) mirrors Auth.js's useSession so pages won't need
-// to change when the real providers are wired up. For now signing in just remembers the sample
-// shopper in this browser.
+// Thin wrapper over Auth.js so pages keep one simple shape: status / user / signIn / signOut.
+// Sign-in is Google only (see auth.ts).
 
-export type Provider = "google" | "facebook";
-export type SessionUser = { name: string; email: string; image: string | null; provider: Provider };
+export type Provider = "google";
+export type SessionUser = { name: string; email: string; image: string | null; provider: string; isAdmin: boolean };
 type Status = "loading" | "authenticated" | "unauthenticated";
 
-type SessionValue = {
-  status: Status;
-  user: SessionUser | null;
-  signIn: (provider: Provider) => void;
-  signOut: () => void;
-};
-
-const SessionContext = createContext<SessionValue | null>(null);
-const KEY = "perle-session";
-
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<SessionUser | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(KEY);
-      if (saved) setUser(JSON.parse(saved));
-    } catch {
-      /* storage unavailable: signed out */
-    }
-    setLoaded(true);
-  }, []);
-
-  const value = useMemo<SessionValue>(
-    () => ({
-      status: !loaded ? "loading" : user ? "authenticated" : "unauthenticated",
-      user,
-      signIn: (provider) => {
-        const u: SessionUser = { name: DEMO_CUSTOMER.name, email: DEMO_CUSTOMER.email, image: null, provider };
-        setUser(u);
-        try {
-          localStorage.setItem(KEY, JSON.stringify(u));
-        } catch {
-          /* ignore */
-        }
-      },
-      signOut: () => {
-        setUser(null);
-        try {
-          localStorage.removeItem(KEY);
-        } catch {
-          /* ignore */
-        }
-      },
-    }),
-    [user, loaded],
-  );
-
-  return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
+  return <AuthSessionProvider>{children}</AuthSessionProvider>;
 }
 
-export function useSession() {
-  const ctx = useContext(SessionContext);
-  if (!ctx) throw new Error("useSession must be used inside SessionProvider");
-  return ctx;
+export function useSession(): {
+  status: Status;
+  user: SessionUser | null;
+  signIn: (provider: Provider, redirectTo?: string) => void;
+  signOut: () => void;
+} {
+  const { data, status } = useAuthSession();
+  const u = data?.user;
+  const user: SessionUser | null = u
+    ? {
+        name: u.name || u.email?.split("@")[0] || "Shopper",
+        email: u.email ?? "",
+        image: u.image ?? null,
+        provider: u.provider,
+        isAdmin: u.isAdmin,
+      }
+    : null;
+
+  return {
+    status,
+    user,
+    signIn: (provider, redirectTo = "/account") => void authSignIn(provider, { redirectTo }),
+    signOut: () => void authSignOut({ redirectTo: "/" }),
+  };
 }

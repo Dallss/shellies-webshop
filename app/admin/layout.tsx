@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { auth, isAdminEmail } from "@/auth";
 import { AdminProvider } from "@/lib/admin-store";
 import { TAB_BAR_SPACE } from "@/components/TabBar";
 import { AdminSidebar } from "./AdminSidebar";
 
 export const metadata: Metadata = { title: "Shop admin", robots: { index: false } };
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // Middleware already gates /admin; this re-checks on the server in case the matcher ever drifts.
+  const session = await auth();
+  if (!session?.user) redirect("/login?next=/admin");
+  if (!isAdminEmail(session.user.email)) redirect("/not-allowed");
+
   return (
     <AdminProvider>
       <div className="flex min-h-screen flex-col bg-ice text-ink md:flex-row">

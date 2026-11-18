@@ -52,7 +52,7 @@ export function AccountView() {
   const active = orders.filter(isOpen);
   const past = orders.filter((o) => !isOpen(o));
   const firstName = user.name.split(" ")[0];
-  const via = user.provider === "google" ? "Google" : "Facebook";
+  const via = "Google";
 
   return (
     <div className="relative overflow-hidden">

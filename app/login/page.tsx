@@ -19,7 +19,7 @@ export default function LoginPage() {
           <div className="text-center">
             <h1 className="font-display text-[clamp(34px,5vw,44px)] font-extrabold leading-none tracking-[-0.03em] text-navy">Log in or sign up</h1>
             <p className="mt-3 text-[17px] leading-relaxed text-muted">
-              Use your Google or Facebook account. New here? Continuing creates your Perle &amp; Co. account. No new password to remember.
+              Use your Google account. New here? Continuing creates your Perle &amp; Co. account. No new password to remember.
             </p>
           </div>
 

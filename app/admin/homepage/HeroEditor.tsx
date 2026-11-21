@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { NfcIcon } from "@/components/art";
+import { TapNotification } from "@/components/TapNotification";
 import { PageTitle, Toast, labelClass } from "@/components/admin/ui";
 import { useAdmin } from "@/lib/admin-store";
 import { removeHeroPhotoAction, setHeroPhotoAction } from "../actions";
@@ -46,14 +46,8 @@ export function HeroEditor({ initialHero }: { initialHero: string | null }) {
               No photo yet. The homepage shows the bracelet illustration.
             </span>
           )}
-          <div aria-hidden className="absolute bottom-[6%] right-[5%] flex w-[66%] items-center gap-2.5 rounded-2xl bg-white px-3 py-2.5 shadow-[0_12px_28px_rgba(11,42,91,0.18)]">
-            <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-red">
-              <NfcIcon className="h-[18px] w-[18px]" stroke="#fff" />
-            </span>
-            <span className="text-[12px] leading-tight text-ink">
-              <b className="block text-[13px]">Anne Reyes</b>
-              0912 345 6789
-            </span>
+          <div aria-hidden className="absolute inset-x-[4%] bottom-[5%]">
+            <TapNotification compact lines={["Anne Reyes", "0912 345 6789"]} />
           </div>
         </div>
 

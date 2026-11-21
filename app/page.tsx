@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Bracelet, Mascot, NfcIcon } from "@/components/art";
+import { Bracelet, Mascot } from "@/components/art";
+import { TapNotification } from "@/components/TapNotification";
 import { ProductPhoto } from "@/components/ProductPhoto";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { BubbleField } from "@/components/BubbleField";
@@ -81,18 +82,10 @@ export default async function Home() {
                 <Bracelet hex="#C9973A" label="Shellie bracelet with an NFC tag" className="swing absolute left-[8%] top-[10%] w-[84%]" />
               </>
             )}
-            <div className="bob absolute bottom-[6%] right-[5%] flex w-[78%] items-center gap-3 rounded-3xl bg-white px-4 py-3.5 sm:bottom-[7%] sm:right-[6%] sm:w-[62%] sm:gap-3.5 sm:px-5 sm:py-[18px] shadow-[0_18px_40px_rgba(11,42,91,0.18)]">
-              <div className="relative flex h-[52px] w-[52px] flex-none items-center justify-center rounded-full bg-red">
-                <span aria-hidden className="ripple absolute inset-0 rounded-full border-2 border-red" />
-                <span aria-hidden className="ripple ripple-late absolute inset-0 rounded-full border-2 border-red" />
-                <NfcIcon className="relative h-[26px] w-[26px]" stroke="#fff" />
-              </div>
-              <div className="min-w-0 text-sm leading-[1.35] text-ink">
-                <div className="text-base font-bold">Anne Reyes</div>
-                <div>0912 345 6789</div>
-                <div>12 years old · Talisay, Cebu</div>
-              </div>
-            </div>
+            <TapNotification
+              lines={["Anne Reyes", "0912 345 6789"]}
+              className="bob absolute inset-x-[4%] bottom-[5%] sm:inset-x-[6%] sm:bottom-[6%]"
+            />
           </div>
         </div>
       </section>
@@ -154,7 +147,7 @@ export default async function Home() {
             <br />
             Big peace of mind.
           </h2>
-          <p className="mt-[22px] text-lg italic sm:text-xl">Shellie, it&apos;s what you deserve!</p>
+          <p className="mt-[22px] text-lg italic sm:text-xl">One little buddy. Endless possibilities.</p>
           <Link href="/shop" className="bubbly mt-8 inline-flex h-14 items-center rounded-[20px] bg-white px-8 text-lg sm:h-16 sm:px-10 sm:text-[19px] font-semibold text-navy no-underline">
             Build your Shellie collection
           </Link>

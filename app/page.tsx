@@ -119,7 +119,7 @@ export default async function Home() {
         <div className="reveal flex flex-wrap items-end justify-between gap-5">
           <div>
             <h2 className="font-display text-[clamp(36px,4.6vw,56px)] font-extrabold leading-none tracking-[-0.03em]">The Signature Collection</h2>
-            <p className="mt-2.5 text-lg italic">The original edition. Six colors, one for every kind of kid.</p>
+            <p className="mt-2.5 text-lg italic">The original edition. Six colors, one for every style.</p>
           </div>
           <Link href="/shop" className="text-[17px] font-semibold">
             Shop the collection →

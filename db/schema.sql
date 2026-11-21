@@ -69,7 +69,7 @@ insert into posts (id, title, category, status, body, published_at, created_at) 
    'Open the app, tap the + button, and hold your phone to the bracelet. Then switch on the details you want a helper to see.',
    '2026-11-03 10:00+08', '2026-11-03 10:00+08'),
   ('p2', 'Meet the Signature Collection', 'New drop', 'published',
-   'Six colors, one for every kind of kid. Honey, Petal, Tide, Sol, Onyx and Pearl are all ₱149 and come with the NFC tag ready to set up.',
+   'Six colors, one for every style. Honey, Petal, Tide, Sol, Onyx and Pearl are all ₱149 and come with the NFC tag ready to set up.',
    '2026-11-10 10:00+08', '2026-11-10 10:00+08'),
   ('p3', 'Holiday orders: last day to order', 'News', 'draft',
    'Want a Shellie under the tree? Order by [DATE] so it arrives before Christmas.',

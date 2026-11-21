@@ -20,11 +20,14 @@ export function Mascot({ className = "", priority = false, deep = false }: { cla
   );
 }
 
+/** The original black brand mark, used by the archived v1 pages under /v1. */
+export const V1_BRANDMARK = "/brand/v1/brandmark.png";
+
 /** The "Perle & Co." brand mark. Ink navy (#0b2a5b) by default; `light` turns it white for dark backgrounds. */
-export function Wordmark({ className = "", light = false }: { className?: string; light?: boolean }) {
+export function Wordmark({ className = "", light = false, src = "/brand/brandmark.png" }: { className?: string; light?: boolean; src?: string }) {
   return (
     <Image
-      src="/brand/brandmark.png"
+      src={src}
       alt="Perle & Co."
       width={1200}
       height={198}

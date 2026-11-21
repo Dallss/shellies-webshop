@@ -2,11 +2,14 @@ import Image from "next/image";
 
 // Brand art: the official mascot and brand mark (public/brand), and the Shellie bracelet.
 
-/** The crab mascot. Decorative: size it with className (it keeps its proportions). */
-export function Mascot({ className = "", priority = false }: { className?: string; priority?: boolean }) {
+/**
+ * The crab mascot. Decorative: size it with className (it keeps its proportions).
+ * `deep` is a flat, darker-red version for red backgrounds, where the shaded original blends in.
+ */
+export function Mascot({ className = "", priority = false, deep = false }: { className?: string; priority?: boolean; deep?: boolean }) {
   return (
     <Image
-      src="/brand/mascot.png"
+      src={deep ? "/brand/mascot-deep.png" : "/brand/mascot.png"}
       alt=""
       aria-hidden
       width={800}

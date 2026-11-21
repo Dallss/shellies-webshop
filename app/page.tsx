@@ -156,7 +156,7 @@ export default async function Home() {
         </div>
         <div aria-hidden className="relative mx-auto mt-12 h-[150px] max-w-[400px] overflow-hidden sm:mt-[70px] sm:h-[230px] sm:max-w-[620px]">
           <div className="peek">
-            <Mascot className="bob block w-full" />
+            <Mascot deep className="bob block w-full" />
           </div>
         </div>
       </section>

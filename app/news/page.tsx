@@ -76,7 +76,7 @@ export default async function NewsPage() {
               @perle.and.company →
             </a>
             <div aria-hidden className="absolute bottom-0 left-7 h-[72px] w-[150px] overflow-hidden">
-              <Mascot className="bob block w-[150px]" />
+              <Mascot deep className="bob block w-[150px]" />
             </div>
           </article>
         </div>

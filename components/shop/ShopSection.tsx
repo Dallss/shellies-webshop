@@ -25,7 +25,7 @@ export function ShopSection({ products }: { products: Product[] }) {
   if (!sel) {
     return (
       <section className="mx-auto max-w-[1240px] px-5 pb-24 pt-16 text-center sm:px-6">
-        <h1 className="font-display text-[clamp(42px,6vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-ink">Back soon!</h1>
+        <h1 className="font-display text-[clamp(42px,6vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-navy">Back soon!</h1>
         <p className="mt-4 text-[19px]">We&apos;re restocking. Follow <a href="https://instagram.com/perle.and.company">@perle.and.company</a> for the next drop.</p>
       </section>
     );
@@ -36,7 +36,7 @@ export function ShopSection({ products }: { products: Product[] }) {
   return (
     <>
       <section id="shop" className="mx-auto max-w-[1240px] scroll-mt-6 px-5 pb-6 pt-8 sm:px-6 sm:pt-16">
-        <h1 className="rise rise-1 font-display text-[clamp(42px,6vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-ink">
+        <h1 className="rise rise-1 font-display text-[clamp(42px,6vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-navy">
           The <i>Shellie</i> Collection
         </h1>
         <p className="rise rise-2 mt-3 text-[17px] sm:text-[19px]">Made to your taste. Every Shellie comes with its NFC tag ready to set up.</p>

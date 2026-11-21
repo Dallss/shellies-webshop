@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Mascot } from "@/components/art";
-import { ProductPhoto } from "@/components/ProductPhoto";
+import { ProductPhoto, ProductThumb } from "@/components/ProductPhoto";
 import { useCart } from "@/lib/cart";
 import { formatPeso, type Product } from "@/lib/data";
 
@@ -41,15 +42,22 @@ export function ShopSection({ products }: { products: Product[] }) {
         <p className="rise rise-2 mt-3 text-[17px] sm:text-[19px]">Made to your taste. Every Shellie comes with its NFC tag ready to set up.</p>
 
         <div className="rise rise-3 mt-8 flex flex-wrap items-stretch gap-5 sm:mt-10 sm:gap-8">
-          <div className="relative flex min-h-[320px] min-w-0 flex-[1_1_min(480px,100%)] items-center justify-center overflow-hidden rounded-[32px] bg-white py-8 sm:min-h-[460px] sm:rounded-[40px]">
-            <div key={`tint-${sel.id}`} aria-hidden className="pop absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-[340px] sm:w-[340px]" style={{ background: sel.tint }} />
-            <div key={sel.id} className="pop relative flex w-[72%] max-w-[440px] justify-center sm:w-[78%]">
-              <ProductPhoto product={sel} priority sizes="(max-width: 640px) 80vw, 440px" className={sel.image ? "shadow-[0_18px_40px_rgba(0,64,160,0.15)]" : "bob"} />
+          {sel.image ? (
+            // The photo is the panel: its own studio backdrop fills the space edge to edge.
+            <div className="relative min-h-[340px] min-w-0 flex-[1_1_min(480px,100%)] overflow-hidden rounded-[32px] sm:min-h-[460px] sm:rounded-[40px]" style={{ background: sel.tint }}>
+              <Image key={sel.id} src={sel.image} alt={`${sel.name} Shellie`} fill priority sizes="(max-width: 640px) 100vw, 640px" className="fade-in object-cover" />
             </div>
-            <div aria-hidden className="absolute bottom-0 left-6 h-[48px] w-[100px] overflow-hidden sm:left-9 sm:h-[62px] sm:w-[130px]">
-              <Mascot className="bob block w-[100px] sm:w-[130px]" />
+          ) : (
+            <div className="relative flex min-h-[320px] min-w-0 flex-[1_1_min(480px,100%)] items-center justify-center overflow-hidden rounded-[32px] bg-white py-8 sm:min-h-[460px] sm:rounded-[40px]">
+              <div key={`tint-${sel.id}`} aria-hidden className="pop absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-[340px] sm:w-[340px]" style={{ background: sel.tint }} />
+              <div key={sel.id} className="pop relative flex w-[72%] max-w-[440px] justify-center sm:w-[78%]">
+                <ProductPhoto product={sel} priority sizes="(max-width: 640px) 80vw, 440px" className="bob" />
+              </div>
+              <div aria-hidden className="absolute bottom-0 left-6 h-[48px] w-[100px] overflow-hidden sm:left-9 sm:h-[62px] sm:w-[130px]">
+                <Mascot className="bob block w-[100px] sm:w-[130px]" />
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex min-w-0 flex-[1_1_min(380px,100%)] flex-col gap-[22px] rounded-[32px] bg-navy sm:rounded-[40px] p-[clamp(24px,3.4vw,44px)] text-white">
             <div>
@@ -124,11 +132,15 @@ export function ShopSection({ products }: { products: Product[] }) {
             className="reveal -mx-5 mt-4 flex snap-x snap-mandatory scroll-px-5 gap-[22px] overflow-x-auto overscroll-x-contain px-5 py-4 [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:px-0 sm:[scrollbar-width:thin]"
           >
             {products.map((p) => (
-              <div key={p.id} role="listitem" className="lift wiggle-host flex w-[72%] flex-none snap-start flex-col items-center gap-2.5 rounded-[26px] bg-white px-4 py-5 shadow-[0_10px_30px_rgba(0,64,160,0.06)] sm:w-[42%] sm:rounded-[30px] sm:px-[18px] sm:py-[22px] lg:w-[30%]">
+              <div key={p.id} role="listitem" className={`lift flex w-[72%] flex-none snap-start flex-col items-center gap-2.5 overflow-hidden rounded-[26px] bg-white pb-5 shadow-[0_10px_30px_rgba(0,64,160,0.06)] sm:w-[42%] sm:rounded-[30px] sm:pb-[22px] lg:w-[30%] ${p.image ? "" : "wiggle-host pt-5 sm:pt-[22px]"}`}>
                 <button type="button" onClick={() => setSelId(p.id)} aria-label={`View ${p.name}`} className="w-full">
-                  <ProductPhoto product={p} decorative className="mx-auto max-w-[180px]" />
+                  {p.image ? (
+                    <ProductPhoto product={p} decorative rounded="" sizes="(max-width: 640px) 72vw, 300px" />
+                  ) : (
+                    <ProductPhoto product={p} decorative className="mx-auto max-w-[180px]" />
+                  )}
                 </button>
-                <div className="text-xl font-bold text-[#111]">{p.name}</div>
+                <div className="mt-1 text-xl font-bold text-[#111]">{p.name}</div>
                 <div className="flex items-center gap-2">
                   <span className="inline-flex h-11 items-center rounded-xl bg-sky-2 px-4 font-bold text-navy">{formatPeso(p.price)}</span>
                   <button
@@ -158,7 +170,7 @@ export function ShopSection({ products }: { products: Product[] }) {
           )}
           {lines.map((p) => (
             <div key={p.id} className="pop flex items-center gap-3.5 rounded-[20px] bg-ice px-3.5 py-3">
-              <span aria-hidden className="h-11 w-11 flex-none rounded-full border-[3px] border-white" style={{ background: p.hex }} />
+              <ProductThumb product={p} />
               <div className="min-w-0 flex-1">
                 <div className="font-bold">{p.name}</div>
                 <div className="text-sm text-muted">

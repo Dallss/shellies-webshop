@@ -56,12 +56,12 @@ alter table posts    enable row level security;
 
 -- Seed: the six listings already in the shop, and the existing posts. Only inserted if missing.
 insert into products (id, name, hex, tint, price, stock, shown, description, sort) values
-  ('classic',  'Honey',    '#A1773B', '#F3E8DA', 149, 42, true, 'Golden cord with the original shell-shaped NFC tag.', 1),
-  ('flamingo', 'Petal',    '#D500B4', '#FBE0F5', 149, 18, true, 'Bright pink cord, our best seller.', 2),
-  ('tide',     'Tide',     '#4C8EF0', '#DCE8FD', 149, 35, true, 'Ocean-blue cord.', 3),
-  ('honey',    'Sol',      '#FFD23F', '#FFF4CC', 149,  7, true, 'Sunny yellow cord.', 4),
-  ('onyx',     'Onyx',     '#4A4A4A', '#E4E4E4', 149, 26, true, 'Charcoal cord that goes with everything.', 5),
-  ('pearl',    'Pearl',    '#D4D4D4', '#F1F1F1', 149,  0, true, 'Soft white cord.', 6)
+  ('classic',  'Honey',    '#94693A', '#DFCFBF', 149, 42, true, 'Golden cord with the original shell-shaped NFC tag.', 1),
+  ('flamingo', 'Petal',    '#D500B4', '#EBCFEA', 149, 18, true, 'Bright pink cord, our best seller.', 2),
+  ('tide',     'Tide',     '#4F74C4', '#A6D2F1', 149, 35, true, 'Ocean-blue cord.', 3),
+  ('honey',    'Sol',      '#F9C95E', '#EBE9C0', 149,  7, true, 'Sunny yellow cord.', 4),
+  ('onyx',     'Onyx',     '#1C1C1E', '#D7D7DC', 149, 26, true, 'Charcoal cord that goes with everything.', 5),
+  ('pearl',    'Pearl',    '#EFEBE3', '#E6E6EF', 149,  0, true, 'Soft white cord.', 6)
 on conflict (id) do nothing;
 
 insert into posts (id, title, category, status, body, published_at, created_at) values

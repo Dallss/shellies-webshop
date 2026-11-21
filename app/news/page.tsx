@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Bracelet, Mascot, Wordmark } from "@/components/art";
+import { ProductPhoto } from "@/components/ProductPhoto";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TAB_BAR_SPACE } from "@/components/TabBar";
 import { listPosts, listProducts } from "@/lib/db";
@@ -29,11 +30,19 @@ export default async function NewsPage() {
       {featured && (
         <section className="rise rise-4 mx-auto max-w-[1240px] px-5 py-4 sm:px-6">
           <article className="flex flex-wrap overflow-hidden rounded-[32px] bg-navy text-white sm:rounded-[40px]">
-            <div className="flex min-h-56 min-w-0 flex-[1_1_min(420px,100%)] flex-wrap items-center justify-center gap-1 bg-sky p-6 sm:min-h-80 sm:p-8">
-              {products.map((p) => (
-                <Bracelet key={p.id} hex={p.hex} className="bob w-[30%] max-w-40" />
-              ))}
-            </div>
+            {products.length > 0 && products.every((p) => p.image) ? (
+              <div className="grid min-w-0 flex-[1_1_min(420px,100%)] grid-cols-3">
+                {products.slice(0, 6).map((p) => (
+                  <ProductPhoto key={p.id} product={p} decorative rounded="" sizes="(max-width: 640px) 33vw, 210px" />
+                ))}
+              </div>
+            ) : (
+              <div className="flex min-h-56 min-w-0 flex-[1_1_min(420px,100%)] flex-wrap items-center justify-center gap-1 bg-sky p-6 sm:min-h-80 sm:p-8">
+                {products.map((p) => (
+                  <Bracelet key={p.id} hex={p.hex} className="bob w-[30%] max-w-40" />
+                ))}
+              </div>
+            )}
             <div className="flex min-w-0 flex-[1_1_min(420px,100%)] flex-col gap-4 p-[clamp(26px,3.4vw,48px)]">
               <p className="text-sm font-semibold uppercase tracking-[0.06em] text-sky-2">
                 {featured.category} · {featured.date}

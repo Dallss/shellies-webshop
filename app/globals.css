@@ -55,6 +55,7 @@ button {
    .bubbly          springy hover lift and squish on press (buttons, swatches)
    .lift            softer hover lift for cards
    .pop             springy pop when an element appears or changes
+   .fade-in         quick cross-fade, for a product photo swapping in
    .jelly           wobble, for counters that change
    .wiggle-host     its bracelet/crab wiggles on hover
    .pulse-ring      soft ring that ripples out (main call button)
@@ -78,6 +79,12 @@ button {
   100% {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
   }
 }
 
@@ -236,6 +243,9 @@ button {
 
   .pop {
     animation: pop 550ms var(--ease-soft) backwards;
+  }
+  .fade-in {
+    animation: fade-in 320ms ease-out backwards;
   }
   .jelly {
     animation: jelly 650ms ease backwards;

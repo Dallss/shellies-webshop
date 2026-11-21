@@ -122,11 +122,17 @@ export default async function Home() {
         </div>
         <div className="reveal mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:grid-cols-[repeat(auto-fit,minmax(170px,1fr))] sm:gap-5">
           {products.map((p, i) => (
-            <Link key={p.id} href="/shop" className="lift wiggle-host flex flex-col items-center gap-2 rounded-[24px] bg-white px-3 pb-4 pt-4 no-underline sm:rounded-[28px] sm:px-4 sm:pb-[22px] sm:pt-5">
-              <span className="bob block w-full max-w-[170px]" style={{ animationDelay: `${i * -0.6}s` }}>
-                <ProductPhoto product={p} />
-              </span>
-              <span className="text-[17px] font-bold text-[#111] sm:text-[19px]">{p.name}</span>
+            <Link key={p.id} href="/shop" className="lift group flex flex-col gap-2.5 no-underline">
+              {p.image ? (
+                <ProductPhoto product={p} rounded="rounded-[22px] sm:rounded-[28px]" className="shadow-[0_10px_24px_rgba(77,5,5,0.10)]" />
+              ) : (
+                <span className="wiggle-host flex aspect-square items-center rounded-[22px] bg-white p-4 sm:rounded-[28px]">
+                  <span className="bob block w-full" style={{ animationDelay: `${i * -0.6}s` }}>
+                    <ProductPhoto product={p} />
+                  </span>
+                </span>
+              )}
+              <span className="px-1 text-[17px] font-bold text-navy sm:text-[19px]">{p.name}</span>
             </Link>
           ))}
         </div>

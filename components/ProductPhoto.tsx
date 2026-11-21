@@ -11,12 +11,15 @@ export function ProductPhoto({
   sizes = "(max-width: 640px) 50vw, 240px",
   decorative = false,
   priority = false,
+  rounded = "rounded-[24px]",
 }: {
   product: Pick<Product, "name" | "hex" | "tint" | "image">;
   className?: string;
   sizes?: string;
   decorative?: boolean;
   priority?: boolean;
+  /** Corner radius class; pass "" when the photo sits flush inside a rounded container. */
+  rounded?: string;
 }) {
   const alt = decorative ? "" : `${product.name} Shellie`;
 
@@ -25,7 +28,7 @@ export function ProductPhoto({
   }
 
   return (
-    <span className={`relative block aspect-square w-full overflow-hidden rounded-[24px] ${className}`} style={{ background: product.tint }}>
+    <span className={`relative block aspect-square w-full overflow-hidden ${rounded} ${className}`} style={{ background: product.tint }}>
       <Image
         src={product.image}
         alt={alt}
@@ -36,6 +39,18 @@ export function ProductPhoto({
         unoptimized={product.image.startsWith("blob:")}
         className="object-cover"
       />
+    </span>
+  );
+}
+
+/** A small round-cornered photo for cart and order rows, or the cord color when there's no photo. */
+export function ProductThumb({ product, className = "h-11 w-11" }: { product: Pick<Product, "hex" | "image">; className?: string }) {
+  if (!product.image) {
+    return <span aria-hidden className={`flex-none rounded-full border-[3px] border-white ${className}`} style={{ background: product.hex }} />;
+  }
+  return (
+    <span aria-hidden className={`relative flex-none overflow-hidden rounded-[14px] ${className}`}>
+      <Image src={product.image} alt="" fill sizes="64px" className="object-cover" />
     </span>
   );
 }

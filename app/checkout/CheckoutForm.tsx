@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useCart } from "@/lib/cart";
 import { PAYMENTS, formatPeso, type Payment, type Product } from "@/lib/data";
+import { ProductThumb } from "@/components/ProductPhoto";
 import { placeOrderAction, type CheckoutInput } from "./actions";
 
 type Fields = Pick<CheckoutInput, "name" | "phone" | "city" | "address" | "payment">;
@@ -108,7 +109,7 @@ export function CheckoutForm({ products, email, defaults }: { products: Product[
         <h2 className="font-display text-[28px] font-extrabold tracking-[-0.02em]">Your order</h2>
         {lines.map(({ p, qty }) => (
           <div key={p.id} className="flex items-center gap-3.5 rounded-[20px] bg-ice px-3.5 py-3">
-            <span aria-hidden className="h-10 w-10 flex-none rounded-full border-[3px] border-white" style={{ background: p.hex }} />
+            <ProductThumb product={p} className="h-12 w-12" />
             <div className="min-w-0 flex-1">
               <div className="font-bold">{p.name}</div>
               <div className="text-sm text-muted">

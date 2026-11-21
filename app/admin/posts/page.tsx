@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { PageTitle, Pill, Toast, coralBtn, dangerBtn, labelClass, primaryBtn, revealIfOffscreen } from "@/components/admin/ui";
 import { useAdmin } from "@/lib/admin-store";
 import { POST_CATEGORIES, type PostCategory } from "@/lib/data";
@@ -125,13 +126,14 @@ export default function PostsPage() {
               Save as draft
             </button>
             {editingId && (
-              <button
-                type="button"
+              <ConfirmButton
+                label="Delete"
+                question="Delete this post? This can't be undone."
+                confirmLabel="Delete post"
                 className={dangerBtn}
                 disabled={busy}
-                onClick={() => {
+                onConfirm={() => {
                   const id = editingId;
-                  if (!window.confirm("Delete this post? This can't be undone.")) return;
                   setBusy(true);
                   deletePostAction(id)
                     .then(() => {
@@ -143,9 +145,7 @@ export default function PostsPage() {
                     .catch(() => setToast("Couldn't delete the post. Try again."))
                     .finally(() => setBusy(false));
                 }}
-              >
-                Delete
-              </button>
+              />
             )}
           </div>
         </form>

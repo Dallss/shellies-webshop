@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { PageTitle, Pill, Toast, coralBtn, dangerBtn, inputClass, labelClass, revealIfOffscreen } from "@/components/admin/ui";
 import { ProductPhoto } from "@/components/ProductPhoto";
 import { Switch } from "@/components/Switch";
@@ -10,13 +11,14 @@ import { createProductAction, deleteProductAction, removeProductPhotoAction, set
 
 type Editable = Partial<Pick<Product, "name" | "hex" | "tint" | "price" | "stock" | "shown" | "description">>;
 
+// Cord colors, matched to the product photos. Lilac and Lime are spares for new colors.
 const SWATCHES = [
-  ["Gold", "#C9973A"],
-  ["Pink", "#FF6EC7"],
-  ["Blue", "#4C8EF0"],
-  ["Yellow", "#FFD23F"],
-  ["Charcoal", "#4A4A4A"],
-  ["White", "#D4D4D4"],
+  ["Honey brown", "#94693A"],
+  ["Magenta", "#D500B4"],
+  ["Periwinkle", "#4F74C4"],
+  ["Sunny yellow", "#F9C95E"],
+  ["Black", "#1C1C1E"],
+  ["Cream", "#EFEBE3"],
   ["Lilac", "#C985DB"],
   ["Lime", "#9BDB4C"],
 ];
@@ -198,15 +200,15 @@ export default function ListingsPage() {
             <fieldset>
               <legend className={`${labelClass} mb-2`}>Cord color</legend>
               <div className="flex flex-wrap gap-2">
-                {SWATCHES.map(([name, hex]) => (
+                {(SWATCHES.some(([, hex]) => hex.toLowerCase() === sel.hex.toLowerCase()) ? SWATCHES : [["Current color", sel.hex], ...SWATCHES]).map(([name, hex]) => (
                   <button
                     key={hex}
                     type="button"
                     aria-label={name}
-                    aria-pressed={sel.hex === hex}
+                    aria-pressed={sel.hex.toLowerCase() === hex.toLowerCase()}
                     onClick={() => patch({ hex })}
                     className="bubbly h-11 w-11 rounded-full border-4 border-white"
-                    style={{ background: hex, boxShadow: sel.hex === hex ? "0 0 0 3px #0B2A5B" : undefined }}
+                    style={{ background: hex, boxShadow: sel.hex.toLowerCase() === hex.toLowerCase() ? "0 0 0 3px #0B2A5B" : undefined }}
                   />
                 ))}
               </div>
@@ -219,13 +221,14 @@ export default function ListingsPage() {
               <span className="font-semibold">Show in the shop</span>
               <Switch checked={sel.shown} label="Show in the shop" onChange={() => patch({ shown: !sel.shown })} />
             </div>
-            <button
-              type="button"
+            <ConfirmButton
+              label="Remove this listing"
+              question={`Remove ${sel.name} from your listings? Past orders keep their details.`}
+              confirmLabel="Remove"
               className={dangerBtn}
               disabled={busy}
-              onClick={async () => {
+              onConfirm={async () => {
                 const { id, name } = sel;
-                if (!window.confirm(`Remove ${name} from your listings? Past orders keep their details.`)) return;
                 queued.current.delete(id);
                 const ok = await run(async () => (await deleteProductAction(id), true), "Couldn't remove that listing. Try again.");
                 if (!ok) return;
@@ -234,9 +237,7 @@ export default function ListingsPage() {
                 setSelId(rest[0]?.id ?? null);
                 setToast(`${name} was removed from your listings.`);
               }}
-            >
-              Remove this listing
-            </button>
+            />
           </form>
         )}
       </div>

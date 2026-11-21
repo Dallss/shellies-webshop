@@ -30,7 +30,12 @@ export default async function NewsPage() {
       {featured && (
         <section className="rise rise-4 mx-auto max-w-[1240px] px-5 py-4 sm:px-6">
           <article className="flex flex-wrap overflow-hidden rounded-[32px] bg-navy text-white sm:rounded-[40px]">
-            {products.length > 0 && products.every((p) => p.image) ? (
+            {featured.category !== "New drop" ? (
+              // News and tips aren't about the collection, so they get the mascot instead of product art.
+              <div className="flex min-h-56 min-w-0 flex-[1_1_min(420px,100%)] items-end justify-center overflow-hidden bg-sky px-6 pt-8 sm:min-h-80">
+                <Mascot className="bob block w-[62%] max-w-[300px] translate-y-[18%]" />
+              </div>
+            ) : products.length > 0 && products.every((p) => p.image) ? (
               <div className="grid min-w-0 flex-[1_1_min(420px,100%)] grid-cols-3">
                 {products.slice(0, 6).map((p) => (
                   <ProductPhoto key={p.id} product={p} decorative rounded="" sizes="(max-width: 640px) 33vw, 210px" />

@@ -204,11 +204,11 @@ export async function lastShippingFor(email: string) {
   return row ?? null;
 }
 
+/** Changes an order's status in the database. Cancelling puts its items back in stock. */
 export async function setOrderStatus(id: string, status: OrderStatus) {
-  const [row] = await rest<OrderRow[]>(`orders?id=eq.${encodeURIComponent(id)}`, {
-    method: "PATCH",
-    prefer: "return=representation",
-    body: JSON.stringify({ status }),
+  const [row] = await rest<OrderRow[]>("rpc/set_order_status", {
+    method: "POST",
+    body: JSON.stringify({ p_id: id, p_status: status }),
   });
   if (!row) throw new DbError("Order not found");
   return toOrder(row);

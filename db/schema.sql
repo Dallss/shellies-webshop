@@ -131,6 +131,39 @@ $$;
 revoke all on function place_order(text, text, text, text, text, text, text, jsonb) from public, anon, authenticated;
 grant execute on function place_order(text, text, text, text, text, text, text, jsonb) to service_role;
 
+-- Changes an order's status. Cancelling puts the order's items back in stock (for listings that
+-- still exist) in the same transaction, so stock can't drift. Cancelled orders are closed.
+create or replace function set_order_status(p_id text, p_status text) returns setof orders
+language plpgsql
+as $$
+declare
+  o  orders%rowtype;
+  it jsonb;
+begin
+  select * into o from orders where id = p_id for update;
+  if not found then
+    raise exception 'NOT_FOUND';
+  end if;
+
+  if o.status <> p_status then
+    if o.status = 'cancelled' then
+      raise exception 'ORDER_CLOSED';
+    end if;
+    if p_status = 'cancelled' then
+      for it in select * from jsonb_array_elements(o.items) loop
+        update products set stock = stock + (it->>'qty')::integer where id = it->>'productId';
+      end loop;
+    end if;
+    update orders set status = p_status where id = p_id;
+  end if;
+
+  return query select * from orders where id = p_id;
+end;
+$$;
+
+revoke all on function set_order_status(text, text) from public, anon, authenticated;
+grant execute on function set_order_status(text, text) to service_role;
+
 -- Let Supabase's REST API see the new tables and function right away.
 notify pgrst, 'reload schema';
 

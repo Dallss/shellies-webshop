@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { ConfirmButton } from "@/components/admin/ConfirmButton";
 import { revealIfOffscreen } from "@/components/admin/ui";
 import { useAdmin } from "@/lib/admin-store";
 import { refreshOrdersAction, setOrderStatusAction } from "../actions";
@@ -46,7 +47,7 @@ function StatusBadge({ status }: { status: OrderStatus }) {
 }
 
 export default function OrdersPage() {
-  const { orders, setOrders } = useAdmin();
+  const { orders, setOrders, setProducts } = useAdmin();
   const [tab, setTab] = useState<"all" | OrderStatus>("all");
   const [query, setQuery] = useState("");
   const [selId, setSelId] = useState<string | undefined>(orders[0]?.id);
@@ -76,8 +77,13 @@ export default function OrdersPage() {
   function setStatus(id: string, status: OrderStatus) {
     startTransition(async () => {
       try {
+        const before = orders.find((o) => o.id === id);
         const updated = await setOrderStatusAction(id, status);
         setOrders((os) => os.map((o) => (o.id === id ? updated : o)));
+        // Cancelling puts the items back in stock (done in the database); mirror it in the listings.
+        if (status === "cancelled" && before && before.status !== "cancelled") {
+          setProducts((ps) => ps.map((p) => ({ ...p, stock: p.stock + before.items.filter((it) => it.productId === p.id).reduce((a, it) => a + it.qty, 0) })));
+        }
         setNotice(status === "cancelled" ? `Order ${id} was cancelled.` : `Order ${id} marked as ${LABEL[status].toLowerCase()}.`);
       } catch {
         setNotice(`Couldn't update order ${id}. Check your connection and try again.`);
@@ -357,14 +363,14 @@ export default function OrdersPage() {
                 </button>
               )}
               {(order.status === "new" || order.status === "confirmed") && (
-                <button
-                  type="button"
-                  onClick={() => setStatus(order.id, "cancelled")}
+                <ConfirmButton
+                  label="Cancel order"
+                  question={`Cancel ${order.id}? Its items go back in stock, and the order can't be reopened.`}
+                  confirmLabel="Cancel order"
+                  onConfirm={() => setStatus(order.id, "cancelled")}
                   disabled={pending}
                   className="h-11 whitespace-nowrap rounded-lg border border-[#E3B4B2] sm:h-10 bg-white px-4 text-sm font-semibold text-[#A11410] transition-colors hover:bg-[#FDF3F3]"
-                >
-                  Cancel order
-                </button>
+                />
               )}
               {(order.status === "delivered" || order.status === "cancelled") && (
                 <p className="text-sm text-[#5B6578]">This order is closed. No further action is needed.</p>

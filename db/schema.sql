@@ -65,8 +65,8 @@ insert into products (id, name, hex, tint, price, stock, shown, description, sor
 on conflict (id) do nothing;
 
 insert into posts (id, title, category, status, body, published_at, created_at) values
-  ('p1', 'Set up your Shellie in 2 minutes', 'Tips', 'published',
-   'Open the app, tap the + button, and hold your phone to the bracelet. Then switch on the details you want a helper to see.',
+  ('p1', 'Set up your Shellie in minutes on your own', 'Tips', 'published',
+   'Install any NFC changer app and hold your phone to the bracelet. Input what you want the world to see with limitless possibilities.',
    '2026-11-03 10:00+08', '2026-11-03 10:00+08'),
   ('p2', 'Meet the Signature Collection', 'New drop', 'published',
    'Six colors, one for every style. Honey, Petal, Tide, Sol, Onyx and Pearl are all ₱149 and come with the NFC tag ready to set up.',

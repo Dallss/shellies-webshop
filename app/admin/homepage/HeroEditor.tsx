@@ -38,19 +38,19 @@ export function HeroEditor({ initialHero }: { initialHero: string | null }) {
 
       <section className="rise rise-2 flex flex-wrap items-start gap-6 rounded-[28px] bg-white p-5 sm:rounded-[32px] sm:p-7">
         {/* Preview, framed like the homepage: square, rounded, with the tap card over the corner. */}
-        <div className="relative aspect-square w-full max-w-[360px] flex-none overflow-hidden rounded-[28px] bg-salmon">
+        <div className="relative aspect-square w-full max-w-[360px] flex-none overflow-hidden rounded-[28px] bg-sky">
           {shown ? (
             <Image key={shown} src={shown} alt="Homepage photo preview" fill sizes="360px" className="pop object-cover" />
           ) : (
-            <span className="absolute inset-0 flex items-center justify-center p-8 text-center font-semibold text-maroon">
+            <span className="absolute inset-0 flex items-center justify-center p-8 text-center font-semibold text-ink">
               No photo yet. The homepage shows the bracelet illustration.
             </span>
           )}
-          <div aria-hidden className="absolute bottom-[6%] right-[5%] flex w-[66%] items-center gap-2.5 rounded-2xl bg-white px-3 py-2.5 shadow-[0_12px_28px_rgba(77,5,5,0.18)]">
+          <div aria-hidden className="absolute bottom-[6%] right-[5%] flex w-[66%] items-center gap-2.5 rounded-2xl bg-white px-3 py-2.5 shadow-[0_12px_28px_rgba(11,42,91,0.18)]">
             <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-red">
               <NfcIcon className="h-[18px] w-[18px]" stroke="#fff" />
             </span>
-            <span className="text-[12px] leading-tight text-maroon">
+            <span className="text-[12px] leading-tight text-ink">
               <b className="block text-[13px]">Anne Reyes</b>
               0912 345 6789
             </span>

@@ -14,17 +14,17 @@ export default async function NewsPage() {
   const [featured, ...rest] = posts;
 
   return (
-    <div className="min-h-screen overflow-hidden bg-blush">
+    <div className="min-h-screen overflow-hidden bg-mist">
       <SiteHeader tone="blue" current="/news" />
 
       <section className="relative mx-auto max-w-[1240px] px-5 pb-6 pt-10 sm:px-6 sm:pb-8 sm:pt-16">
         <div aria-hidden className="float-slow absolute -right-[90px] -top-24 h-[160px] w-[160px] rounded-full bg-coral sm:-right-[60px] sm:-top-20 sm:h-[220px] sm:w-[220px]" />
         <div aria-hidden className="float absolute right-[200px] top-10 hidden sm:block h-[60px] w-[60px] rounded-full bg-sky" />
         <p className="rise rise-1 relative text-[15px] font-bold uppercase tracking-[0.06em] text-crimson">From the Perle &amp; Co. team</p>
-        <h1 className="rise rise-2 relative mt-2.5 font-display text-[clamp(44px,6.4vw,84px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-maroon">
+        <h1 className="rise rise-2 relative mt-2.5 font-display text-[clamp(44px,6.4vw,84px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-ink">
           News &amp; notes
         </h1>
-        <p className="rise rise-3 relative mt-3.5 max-w-[560px] text-[17px] text-maroon sm:text-[19px]">New drops, setup tips and what we&apos;re working on.</p>
+        <p className="rise rise-3 relative mt-3.5 max-w-[560px] text-[17px] text-ink sm:text-[19px]">New drops, setup tips and what we&apos;re working on.</p>
       </section>
 
       {featured && (
@@ -54,7 +54,7 @@ export default async function NewsPage() {
               </p>
               <h2 className="font-display text-[clamp(34px,3.6vw,50px)] font-extrabold leading-none tracking-[-0.03em]">{featured.title}</h2>
               <p className="text-[17px] leading-relaxed text-sky">{featured.body}</p>
-              <Link href="/shop" className="bubbly mt-2 inline-flex h-[54px] items-center self-start rounded-[18px] bg-salmon px-[22px] font-bold text-maroon no-underline">
+              <Link href="/shop" className="bubbly mt-2 inline-flex h-[54px] items-center self-start rounded-[18px] bg-sky px-[22px] font-bold text-ink no-underline">
                 Shop the collection →
               </Link>
             </div>
@@ -63,10 +63,10 @@ export default async function NewsPage() {
       )}
 
       <section className="mx-auto max-w-[1240px] px-5 pb-12 pt-8 sm:px-6">
-        <h2 className="mb-5 font-display text-[34px] font-extrabold tracking-[-0.02em] text-maroon">More posts</h2>
+        <h2 className="mb-5 font-display text-[34px] font-extrabold tracking-[-0.02em] text-ink">More posts</h2>
         <div className="reveal grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-4 sm:gap-[22px]">
           {rest.map((p) => (
-            <article key={p.id} className="lift flex flex-col gap-3 rounded-[28px] bg-white p-6 text-maroon sm:rounded-[32px] sm:p-7">
+            <article key={p.id} className="lift flex flex-col gap-3 rounded-[28px] bg-white p-6 text-ink sm:rounded-[32px] sm:p-7">
               <span className="self-start rounded-full bg-sky px-3 py-1 text-[13px] font-bold text-navy">
                 {p.category} · {p.date}
               </span>

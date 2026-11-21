@@ -124,7 +124,7 @@ export function CheckoutForm({ products, email, defaults }: { products: Product[
           </div>
         ))}
         {gone.length > 0 && (
-          <p className="rounded-2xl bg-blush px-4 py-3 text-sm text-maroon">
+          <p className="rounded-2xl bg-mist px-4 py-3 text-sm text-ink">
             {gone.length === 1 ? "One item" : `${gone.length} items`} in your cart {gone.length === 1 ? "is" : "are"} no longer sold and won&apos;t be ordered.{" "}
             <button type="button" className="font-semibold underline" onClick={() => gone.forEach(remove)}>Remove</button>
           </p>

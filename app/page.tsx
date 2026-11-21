@@ -8,7 +8,7 @@ import { getHeroImage, listProducts } from "@/lib/db";
 
 const STEPS = [
   { n: 1, title: "Set up your Shellie", body: "Add a name, a contact number and anything else you want a helper to know.", card: "bg-white", badge: "bg-sky text-navy", text: "text-muted" },
-  { n: 2, title: "Someone taps it", body: "A teacher, a guard or a kind stranger holds their phone to the shell-shaped tag.", card: "bg-white", badge: "bg-rose text-crimson", text: "text-muted" },
+  { n: 2, title: "Someone taps it", body: "A teacher, a guard or a kind stranger holds their phone to the shell-shaped tag.", card: "bg-white", badge: "bg-coral text-white", text: "text-muted" },
   { n: 3, title: "They reach you", body: "Your shared info opens in their browser, with one tap to call you.", card: "bg-navy text-white", badge: "bg-white text-navy", text: "text-sky" },
 ];
 
@@ -47,14 +47,14 @@ export default async function Home() {
               <span className="word" style={{ "--w": 4 } as React.CSSProperties}>
                 everyone.
               </span>
-              <span className="highlight-grow absolute -left-[0.06em] -right-[0.06em] bottom-[0.06em] -z-10 h-[0.32em] rounded-full bg-salmon" />
+              <span className="highlight-grow absolute -left-[0.06em] -right-[0.06em] bottom-[0.06em] -z-10 h-[0.32em] rounded-full bg-sky-2" />
             </span>
           </h1>
           <p className="rise rise-3 mt-6 max-w-[460px] text-lg italic leading-[1.45] sm:text-[21px]">
             A little tap, a lot to share. Shellie is a bracelet with an NFC tag that makes connecting easier. Simply tap it with a phone, and the information, profiles, and links you&apos;ve chosen to share are ready to discover.
           </p>
           <div className="rise rise-4 mt-8 flex flex-wrap gap-3 sm:mt-9 sm:gap-3.5">
-            <Link href="/shop" className="bubbly inline-flex h-14 flex-[1_1_auto] items-center justify-center rounded-[20px] bg-navy px-7 text-lg sm:h-16 sm:flex-none sm:px-9 sm:text-[19px] font-semibold text-sky no-underline">
+            <Link href="/shop" className="bubbly inline-flex h-14 flex-[1_1_auto] items-center justify-center rounded-[20px] bg-navy px-7 text-lg sm:h-16 sm:flex-none sm:px-9 sm:text-[19px] font-semibold text-white no-underline">
               Get your Shellie · ₱149
             </Link>
             <Link href="#how" className="bubbly inline-flex h-14 flex-[1_1_auto] items-center justify-center rounded-[20px] border-[3px] border-red px-7 text-lg sm:h-16 sm:flex-none sm:text-[19px] font-semibold text-red no-underline">
@@ -64,7 +64,7 @@ export default async function Home() {
         </div>
 
         <div className="rise rise-3 relative flex min-w-0 flex-[1_1_440px] justify-center">
-          <div className="relative aspect-square w-full max-w-[520px] overflow-hidden rounded-[32px] bg-salmon sm:rounded-[40px]">
+          <div className="relative aspect-square w-full max-w-[520px] overflow-hidden rounded-[32px] bg-sky sm:rounded-[40px]">
             {hero ? (
               <Image
                 src={hero.src}
@@ -76,18 +76,18 @@ export default async function Home() {
               />
             ) : (
               <>
-                <div aria-hidden className="float-slow absolute -left-[120px] -top-[90px] h-[380px] w-[380px] rounded-full border-[36px] border-[#FF8A87]" />
-                <div aria-hidden className="float-late absolute -bottom-10 -right-[110px] h-[300px] w-[300px] rounded-full border-[36px] border-[#FF8A87]" />
+                <div aria-hidden className="float-slow absolute -left-[120px] -top-[90px] h-[380px] w-[380px] rounded-full border-[36px] border-[#9DBEF8]" />
+                <div aria-hidden className="float-late absolute -bottom-10 -right-[110px] h-[300px] w-[300px] rounded-full border-[36px] border-[#9DBEF8]" />
                 <Bracelet hex="#C9973A" label="Shellie bracelet with an NFC tag" className="swing absolute left-[8%] top-[10%] w-[84%]" />
               </>
             )}
-            <div className="bob absolute bottom-[6%] right-[5%] flex w-[78%] items-center gap-3 rounded-3xl bg-white px-4 py-3.5 sm:bottom-[7%] sm:right-[6%] sm:w-[62%] sm:gap-3.5 sm:px-5 sm:py-[18px] shadow-[0_18px_40px_rgba(77,5,5,0.18)]">
+            <div className="bob absolute bottom-[6%] right-[5%] flex w-[78%] items-center gap-3 rounded-3xl bg-white px-4 py-3.5 sm:bottom-[7%] sm:right-[6%] sm:w-[62%] sm:gap-3.5 sm:px-5 sm:py-[18px] shadow-[0_18px_40px_rgba(11,42,91,0.18)]">
               <div className="relative flex h-[52px] w-[52px] flex-none items-center justify-center rounded-full bg-red">
                 <span aria-hidden className="ripple absolute inset-0 rounded-full border-2 border-red" />
                 <span aria-hidden className="ripple ripple-late absolute inset-0 rounded-full border-2 border-red" />
                 <NfcIcon className="relative h-[26px] w-[26px]" stroke="#fff" />
               </div>
-              <div className="min-w-0 text-sm leading-[1.35] text-maroon">
+              <div className="min-w-0 text-sm leading-[1.35] text-ink">
                 <div className="text-base font-bold">Anne Reyes</div>
                 <div>0912 345 6789</div>
                 <div>12 years old · Talisay, Cebu</div>
@@ -129,7 +129,7 @@ export default async function Home() {
           {products.map((p, i) => (
             <Link key={p.id} href="/shop" className="lift group flex flex-col gap-2.5 no-underline">
               {p.image ? (
-                <ProductPhoto product={p} rounded="rounded-[22px] sm:rounded-[28px]" className="shadow-[0_10px_24px_rgba(77,5,5,0.10)]" />
+                <ProductPhoto product={p} rounded="rounded-[22px] sm:rounded-[28px]" className="shadow-[0_10px_24px_rgba(11,42,91,0.10)]" />
               ) : (
                 <span className="wiggle-host flex aspect-square items-center rounded-[22px] bg-white p-4 sm:rounded-[28px]">
                   <span className="bob block w-full" style={{ animationDelay: `${i * -0.6}s` }}>
@@ -144,10 +144,10 @@ export default async function Home() {
       </section>
 
       {/* CTA */}
-      <section className="relative overflow-hidden bg-coral px-5 pt-20 sm:px-6 sm:pt-[110px]">
+      <section className="relative overflow-hidden bg-navy px-5 pt-20 sm:px-6 sm:pt-[110px]">
         <BubbleField rise={700} tone="dark" />
         <div aria-hidden className="float absolute -left-10 top-6 h-[90px] w-[90px] rounded-full bg-sky sm:left-[8%] sm:top-10 sm:h-[140px] sm:w-[140px]" />
-        <div aria-hidden className="float-late absolute -right-24 -top-[110px] h-[200px] w-[200px] rounded-full bg-navy sm:-right-20 sm:-top-[90px] sm:h-[260px] sm:w-[260px]" />
+        <div aria-hidden className="float-late absolute -right-24 -top-[110px] h-[200px] w-[200px] rounded-full bg-coral sm:-right-20 sm:-top-[90px] sm:h-[260px] sm:w-[260px]" />
         <div className="reveal relative mx-auto max-w-[900px] text-center text-white">
           <h2 className="font-display text-[clamp(44px,6.4vw,84px)] font-extrabold leading-[0.95] tracking-[-0.035em]">
             Small charm.
@@ -155,13 +155,13 @@ export default async function Home() {
             Big peace of mind.
           </h2>
           <p className="mt-[22px] text-lg italic sm:text-xl">Shellie, it&apos;s what you deserve!</p>
-          <Link href="/shop" className="bubbly mt-8 inline-flex h-14 items-center rounded-[20px] bg-maroon px-8 text-lg sm:h-16 sm:px-10 sm:text-[19px] font-semibold text-white no-underline">
+          <Link href="/shop" className="bubbly mt-8 inline-flex h-14 items-center rounded-[20px] bg-white px-8 text-lg sm:h-16 sm:px-10 sm:text-[19px] font-semibold text-navy no-underline">
             Build your Shellie collection
           </Link>
         </div>
         <div aria-hidden className="relative mx-auto mt-12 h-[150px] max-w-[400px] overflow-hidden sm:mt-[70px] sm:h-[230px] sm:max-w-[620px]">
           <div className="peek">
-            <Mascot deep className="bob block w-full" />
+            <Mascot className="bob block w-full" />
           </div>
         </div>
       </section>

@@ -30,14 +30,14 @@ export default async function ScanPage({ params }: Props) {
   const socials = [facebook, instagram].filter((f) => f.shared && f.value);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-blush text-maroon">
+    <main className="relative min-h-screen overflow-hidden bg-mist text-ink">
       <div aria-hidden className="float-slow absolute -left-[110px] -top-[170px] h-[300px] w-[300px] rounded-full bg-coral" />
       <div aria-hidden className="float absolute right-[120px] top-10 h-[74px] w-[74px] rounded-full bg-sky" />
       <div aria-hidden className="float-late absolute -right-[70px] top-[90px] h-[150px] w-[150px] rounded-full bg-navy" />
 
       <div className="relative mx-auto flex max-w-[480px] flex-col gap-[18px] px-5 pb-8 pt-[150px]">
         <div className="rise rise-1 flex items-center gap-4">
-          <div className="pop h-[76px] w-[76px] flex-none rounded-full border-[5px] border-white shadow-[0_6px_18px_rgba(77,5,5,0.12)]" style={{ background: colorHex(shellie.color) }} />
+          <div className="pop h-[76px] w-[76px] flex-none rounded-full border-[5px] border-white shadow-[0_6px_18px_rgba(11,42,91,0.12)]" style={{ background: colorHex(shellie.color) }} />
           <div>
             <p className="text-[15px] italic">Hi! You found</p>
             <h1 className="font-display text-[42px] font-extrabold leading-none tracking-[-0.03em]">{shellie.name}&apos;s Shellie</h1>
@@ -70,8 +70,8 @@ export default async function ScanPage({ params }: Props) {
           ) : (
             <dl className="flex flex-col">
               {rows.map((r, i) => (
-                <div key={r.label} className={`flex justify-between gap-4 py-3 ${i < rows.length - 1 ? "border-b-2 border-blush" : ""}`}>
-                  <dt className="text-sm text-wine">{r.label}</dt>
+                <div key={r.label} className={`flex justify-between gap-4 py-3 ${i < rows.length - 1 ? "border-b-2 border-mist" : ""}`}>
+                  <dt className="text-sm text-muted">{r.label}</dt>
                   <dd className="text-right font-semibold [overflow-wrap:anywhere]">{r.value}</dd>
                 </div>
               ))}
@@ -80,7 +80,7 @@ export default async function ScanPage({ params }: Props) {
           {address.shared && address.value && (
             <a
               href={`https://maps.google.com/?q=${encodeURIComponent(address.value)}`}
-              className="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-rose text-[15px] font-semibold text-maroon no-underline"
+              className="mt-2 inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-sky text-[15px] font-semibold text-navy no-underline"
             >
               Open address in Maps
             </a>
@@ -102,7 +102,7 @@ export default async function ScanPage({ params }: Props) {
           </section>
         )}
 
-        <p className="mt-1 text-[13px] leading-normal text-wine">Only the details {shellie.name}&apos;s family chose to share are shown here.</p>
+        <p className="mt-1 text-[13px] leading-normal text-muted">Only the details {shellie.name}&apos;s family chose to share are shown here.</p>
 
         <div className="relative mt-7 min-h-[92px] overflow-hidden rounded-[28px] bg-white py-[22px] pl-[140px] pr-[22px]">
           <div aria-hidden className="absolute bottom-0 left-[18px] h-14 w-[104px] overflow-hidden">

@@ -10,6 +10,7 @@
   --color-crimson: #c40f0b;
   --color-maroon: #4d0505;
   --color-wine: #8a3b3b;
+  --color-mist: #f1f5fa;
   --color-blush: #fdeeee;
   --color-rose: #fbdada;
   --color-salmon: #ffa9a7;
@@ -28,7 +29,7 @@ html {
 }
 
 body {
-  background: var(--color-blush);
+  background: var(--color-mist);
   color: var(--color-ink);
   font-family: var(--font-sans);
 }

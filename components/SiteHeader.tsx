@@ -150,7 +150,7 @@ function SiteTabBar({ current }: { current?: string }) {
 
 export function SiteFooter() {
   return (
-    <footer className={`bg-maroon px-5 pt-10 text-rose sm:px-6 md:pb-10 ${TAB_BAR_SPACE}`}>
+    <footer className={`bg-ink px-5 pt-10 text-sky sm:px-6 md:pb-10 ${TAB_BAR_SPACE}`}>
       <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-4 text-[15px]">
         <Wordmark light className="h-[20px]" />
         <ul className="flex flex-wrap gap-x-6 gap-y-2">

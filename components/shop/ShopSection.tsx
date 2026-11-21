@@ -111,7 +111,7 @@ export function ShopSection({ products }: { products: Product[] }) {
                   add(sel.id, Math.min(qty, maxQty));
                   setQty(1);
                 }}
-                className="bubbly h-[60px] flex-[1_1_200px] rounded-[18px] bg-salmon text-[19px] font-bold text-maroon disabled:cursor-not-allowed disabled:opacity-60"
+                className="bubbly h-[60px] flex-[1_1_200px] rounded-[18px] bg-sky text-[19px] font-bold text-ink disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {soldOut ? "Sold out" : maxQty === 0 ? "All in your cart" : `Add to cart · ${formatPeso(sel.price * Math.min(qty, maxQty))}`}
               </button>
@@ -163,7 +163,7 @@ export function ShopSection({ products }: { products: Product[] }) {
         <aside id="cart" aria-label="Cart" className="reveal flex min-w-0 flex-[1_1_min(320px,100%)] scroll-mt-6 flex-col gap-4 rounded-[28px] bg-white p-5 sm:rounded-[32px] sm:p-7">
           <h3 className="font-display text-[32px] font-extrabold tracking-[-0.02em]">Your cart</h3>
           {lines.length === 0 && (
-            <div className="pop rounded-[20px] bg-blush p-6 text-center text-maroon">
+            <div className="pop rounded-[20px] bg-mist p-6 text-center text-ink">
               <p className="font-semibold">No Shellies yet.</p>
               <p className="mt-1.5 text-sm">Pick a color and tap &ldquo;Add to cart&rdquo;.</p>
             </div>

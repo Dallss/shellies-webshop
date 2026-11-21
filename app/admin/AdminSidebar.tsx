@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Crab } from "@/components/art";
+import { Mascot, Wordmark } from "@/components/art";
 import { OrdersIcon, PostIcon, TagIcon } from "@/components/icons";
 import { TabBar } from "@/components/TabBar";
 import { useAdmin } from "@/lib/admin-store";
@@ -24,9 +24,9 @@ export function AdminSidebar() {
     <aside className="flex min-w-0 flex-col gap-3 bg-navy px-4 py-3.5 text-white md:sticky md:top-0 md:h-screen md:w-[260px] md:flex-none md:gap-7 md:px-5 md:py-7">
       <div className="flex items-center justify-between gap-3">
         <div className="wiggle-host flex items-center gap-2.5">
-          <Crab className="h-7 w-9 md:h-8 md:w-[42px]" />
-          <span className="flex flex-col">
-            <span className="font-display text-xl font-extrabold leading-none md:text-[22px]">Perle &amp; Co.</span>
+          <Mascot className="h-8 w-[38px] md:h-9 md:w-[44px]" />
+          <span className="flex flex-col gap-1">
+            <Wordmark light className="h-[18px] md:h-[20px]" />
             <span className="text-[13px] text-sky-2">Shop admin</span>
           </span>
         </div>

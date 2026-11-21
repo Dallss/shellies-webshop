@@ -56,10 +56,10 @@ alter table posts    enable row level security;
 
 -- Seed: the six listings already in the shop, and the existing posts. Only inserted if missing.
 insert into products (id, name, hex, tint, price, stock, shown, description, sort) values
-  ('classic',  'Classic',  '#C9973A', '#F6E8CC', 149, 42, true, 'Golden cord with the original shell-shaped NFC tag.', 1),
-  ('flamingo', 'Flamingo', '#FF6EC7', '#FFE0F3', 149, 18, true, 'Bright pink cord, our best seller.', 2),
+  ('classic',  'Honey',    '#A1773B', '#F3E8DA', 149, 42, true, 'Golden cord with the original shell-shaped NFC tag.', 1),
+  ('flamingo', 'Petal',    '#D500B4', '#FBE0F5', 149, 18, true, 'Bright pink cord, our best seller.', 2),
   ('tide',     'Tide',     '#4C8EF0', '#DCE8FD', 149, 35, true, 'Ocean-blue cord.', 3),
-  ('honey',    'Honey',    '#FFD23F', '#FFF4CC', 149,  7, true, 'Sunny yellow cord.', 4),
+  ('honey',    'Sol',      '#FFD23F', '#FFF4CC', 149,  7, true, 'Sunny yellow cord.', 4),
   ('onyx',     'Onyx',     '#4A4A4A', '#E4E4E4', 149, 26, true, 'Charcoal cord that goes with everything.', 5),
   ('pearl',    'Pearl',    '#D4D4D4', '#F1F1F1', 149,  0, true, 'Soft white cord.', 6)
 on conflict (id) do nothing;
@@ -69,7 +69,7 @@ insert into posts (id, title, category, status, body, published_at, created_at) 
    'Open the app, tap the + button, and hold your phone to the bracelet. Then switch on the details you want a helper to see.',
    '2026-11-03 10:00+08', '2026-11-03 10:00+08'),
   ('p2', 'Meet the Signature Collection', 'New drop', 'published',
-   'Six colors, one for every kind of kid. Classic, Flamingo, Tide, Honey, Onyx and Pearl are all ₱149 and come with the NFC tag ready to set up.',
+   'Six colors, one for every kind of kid. Honey, Petal, Tide, Sol, Onyx and Pearl are all ₱149 and come with the NFC tag ready to set up.',
    '2026-11-10 10:00+08', '2026-11-10 10:00+08'),
   ('p3', 'Holiday orders: last day to order', 'News', 'draft',
    'Want a Shellie under the tree? Order by [DATE] so it arrives before Christmas.',

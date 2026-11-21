@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
 import { useSession } from "@/lib/session";
-import { BagIcon, Crab } from "./art";
+import { BagIcon, Mascot, Wordmark } from "./art";
 import { HomeIcon, NewsIcon, ShellIcon, UserIcon } from "./icons";
 import { TAB_BAR_SPACE, TabBar } from "./TabBar";
 
@@ -48,8 +48,8 @@ function HeaderBar({ blue, current }: { blue: boolean; current?: string }) {
   return (
       <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-6 md:py-5">
         <Link href="/" className="wiggle-host flex items-center gap-2.5 no-underline">
-          <Crab smile className="h-[28px] w-[36px] sm:h-[34px] sm:w-[44px]" />
-          <span className="font-display text-xl font-extrabold tracking-tight sm:text-2xl">Perle &amp; Co.</span>
+          <Mascot priority className="h-[30px] w-[36px] sm:h-[36px] sm:w-[44px]" />
+          <Wordmark light={blue} className="h-[20px] sm:h-[24px]" />
         </Link>
 
         <nav aria-label="Main" className="hidden flex-wrap items-center gap-7 text-[15px] font-medium md:flex">
@@ -152,13 +152,24 @@ export function SiteFooter() {
   return (
     <footer className={`bg-maroon px-5 pt-10 text-rose sm:px-6 md:pb-10 ${TAB_BAR_SPACE}`}>
       <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-4 text-[15px]">
-        <span className="font-display text-xl font-extrabold text-white">Perle &amp; Co.</span>
-        <span>
-          Order on our IG!{" "}
-          <a href="https://instagram.com/perle.and.company" className="font-semibold text-white">
-            @perle.and.company
-          </a>
-        </span>
+        <Wordmark light className="h-[20px]" />
+        <ul className="flex flex-wrap gap-x-6 gap-y-2">
+          <li>
+            Facebook: <span className="font-semibold text-white">Perle &amp; Co.</span>
+          </li>
+          <li>
+            Instagram:{" "}
+            <a href="https://instagram.com/perle.and.company" className="font-semibold text-white">
+              @perle.and.company
+            </a>
+          </li>
+          <li>
+            Email:{" "}
+            <a href="mailto:perleandco.ph@gmail.com" className="font-semibold text-white">
+              perleandco.ph@gmail.com
+            </a>
+          </li>
+        </ul>
       </div>
     </footer>
   );

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Crab } from "@/components/art";
+import { Mascot, Wordmark } from "@/components/art";
 import { SAMPLE_SHELLIES, colorHex, sharedRows } from "@/lib/data";
 
 // The page a finder sees after tapping a Shellie. Each sticker holds a link like /s/AB12CD.
@@ -106,9 +106,9 @@ export default async function ScanPage({ params }: Props) {
 
         <div className="relative mt-7 min-h-[92px] overflow-hidden rounded-[28px] bg-white py-[22px] pl-[140px] pr-[22px]">
           <div aria-hidden className="absolute bottom-0 left-[18px] h-14 w-[104px] overflow-hidden">
-            <Crab className="bob block w-[104px]" />
+            <Mascot className="bob block w-[104px]" />
           </div>
-          <p className="font-display text-[17px] font-extrabold text-ink">Perle &amp; Co.</p>
+          <Wordmark className="mb-1 h-[17px]" />
           <Link href="/" className="text-sm font-semibold">
             Get a Shellie for your family →
           </Link>

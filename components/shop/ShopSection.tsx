@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Crab } from "@/components/art";
+import { Mascot } from "@/components/art";
 import { ProductPhoto } from "@/components/ProductPhoto";
 import { useCart } from "@/lib/cart";
 import { formatPeso, type Product } from "@/lib/data";
@@ -47,7 +47,7 @@ export function ShopSection({ products }: { products: Product[] }) {
               <ProductPhoto product={sel} priority sizes="(max-width: 640px) 80vw, 440px" className={sel.image ? "shadow-[0_18px_40px_rgba(0,64,160,0.15)]" : "bob"} />
             </div>
             <div aria-hidden className="absolute bottom-0 left-6 h-[48px] w-[100px] overflow-hidden sm:left-9 sm:h-[62px] sm:w-[130px]">
-              <Crab className="bob block w-[100px] sm:w-[130px]" />
+              <Mascot className="bob block w-[100px] sm:w-[130px]" />
             </div>
           </div>
 

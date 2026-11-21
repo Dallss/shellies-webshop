@@ -1,33 +1,32 @@
-// Brand illustrations: the crab mascot and the Shellie bracelet.
+import Image from "next/image";
 
-export function Crab({
-  color = "#F2312E",
-  className,
-  smile = false,
-}: {
-  color?: string;
-  className?: string;
-  smile?: boolean;
-}) {
+// Brand art: the official mascot and brand mark (public/brand), and the Shellie bracelet.
+
+/** The crab mascot. Decorative: size it with className (it keeps its proportions). */
+export function Mascot({ className = "", priority = false }: { className?: string; priority?: boolean }) {
   return (
-    <svg viewBox="0 0 120 90" aria-hidden="true" className={className}>
-      <g className="claw-l">
-        <path d="M22 24 L30 10.1 A16 16 0 1 1 14 10.1 Z" fill={color} />
-        <path d="M26 38 L42 58" stroke={color} strokeWidth="7" strokeLinecap="round" />
-      </g>
-      <g className="claw-r">
-        <path d="M98 24 L106 10.1 A16 16 0 1 1 90 10.1 Z" fill={color} />
-        <path d="M94 38 L78 58" stroke={color} strokeWidth="7" strokeLinecap="round" />
-      </g>
-      <ellipse cx="60" cy="66" rx="36" ry="22" fill={color} />
-      <circle cx="50" cy="58" r="5.5" fill="#1A0000" />
-      <circle cx="70" cy="58" r="5.5" fill="#1A0000" />
-      <circle cx="51.6" cy="56.4" r="1.8" fill="#fff" />
-      <circle cx="71.6" cy="56.4" r="1.8" fill="#fff" />
-      <ellipse cx="41" cy="69" rx="6" ry="3.5" fill="#FF9C9C" />
-      <ellipse cx="79" cy="69" rx="6" ry="3.5" fill="#FF9C9C" />
-      {smile && <path d="M55 69 q5 4.5 10 0" stroke="#1A0000" strokeWidth="2.2" fill="none" strokeLinecap="round" />}
-    </svg>
+    <Image
+      src="/brand/mascot.png"
+      alt=""
+      aria-hidden
+      width={800}
+      height={659}
+      priority={priority}
+      className={`mascot object-contain ${className}`}
+    />
+  );
+}
+
+/** The "Perle & Co." brand mark. Black by default; `light` turns it white for dark backgrounds. */
+export function Wordmark({ className = "", light = false }: { className?: string; light?: boolean }) {
+  return (
+    <Image
+      src="/brand/brandmark.png"
+      alt="Perle & Co."
+      width={1200}
+      height={198}
+      className={`w-auto ${light ? "brightness-0 invert" : ""} ${className}`}
+    />
   );
 }
 

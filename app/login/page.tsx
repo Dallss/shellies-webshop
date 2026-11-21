@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Crab } from "@/components/art";
+import { Mascot } from "@/components/art";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { LoginButtons } from "./LoginButtons";
 
@@ -15,7 +15,7 @@ export default function LoginPage() {
 
       <main className="relative mx-auto flex max-w-[1240px] justify-center px-6 pb-24 pt-14">
         <section className="rise rise-1 flex w-full max-w-[460px] flex-col gap-6 rounded-[40px] bg-white p-[clamp(26px,5vw,44px)] shadow-[0_10px_30px_rgba(0,64,160,0.08)]">
-          <Crab smile className="mx-auto h-[56px] w-[72px]" />
+          <Mascot className="mx-auto h-[60px] w-[72px]" />
           <div className="text-center">
             <h1 className="font-display text-[clamp(34px,5vw,44px)] font-extrabold leading-none tracking-[-0.03em] text-navy">Log in or sign up</h1>
             <p className="mt-3 text-[17px] leading-relaxed text-muted">

@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Bracelet, Crab, NfcIcon } from "@/components/art";
+import { Bracelet, Mascot, NfcIcon } from "@/components/art";
 import { ProductPhoto } from "@/components/ProductPhoto";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { BubbleField } from "@/components/BubbleField";
@@ -11,17 +12,12 @@ const STEPS = [
   { n: 3, title: "They reach you", body: "Your shared info opens in their browser, with one tap to call you.", card: "bg-navy text-white", badge: "bg-white text-navy", text: "text-sky" },
 ];
 
-const PREVIEW_FIELDS: { label: string; value: string; on: boolean; demo?: boolean }[] = [
-  { label: "Contact number", value: "(+63) 912 345 6789", on: true },
-  { label: "Age", value: "12", on: true },
-  { label: "Home address", value: "House No., Talisay, Cebu", on: true },
-  { label: "Instagram", value: "@anne.reyes", on: false, demo: true },
-];
-
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const products = await listProducts({ onlyShown: true });
+  // The hero features the first listing that has a photo (reorder listings in the admin to change it).
+  const featured = products.find((p) => p.image);
   return (
     <div className="relative overflow-hidden">
       <SiteHeader current="/" />
@@ -34,11 +30,7 @@ export default async function Home() {
         <BubbleField rise={1000} />
 
         <div className="relative min-w-0 flex-[1_1_460px]">
-          <p className="rise rise-1 mb-5 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-2 text-sm font-semibold text-navy">
-            <NfcIcon className="h-[18px] w-[18px]" />
-            NFC bracelets made for the little ones
-          </p>
-          <h1 aria-label="A little closer to peace of mind." className="font-display text-[clamp(48px,7vw,92px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-balance">
+          <h1 aria-label="A little closer to everyone." className="font-display text-[clamp(48px,7vw,92px)] font-extrabold leading-[0.95] tracking-[-0.035em] text-balance">
             {["A", "little", "closer", "to"].map((w, i) => (
               <span key={w} aria-hidden>
                 <span className="word" style={{ "--w": i } as React.CSSProperties}>
@@ -47,19 +39,14 @@ export default async function Home() {
               </span>
             ))}
             <span aria-hidden className="relative isolate inline-block">
-              {["peace", "of", "mind."].map((w, i) => (
-                <span key={w}>
-                  <span className="word" style={{ "--w": i + 4 } as React.CSSProperties}>
-                    {w}
-                  </span>
-                  {i < 2 ? " " : ""}
-                </span>
-              ))}
+              <span className="word" style={{ "--w": 4 } as React.CSSProperties}>
+                everyone.
+              </span>
               <span className="highlight-grow absolute -left-[0.06em] -right-[0.06em] bottom-[0.06em] -z-10 h-[0.32em] rounded-full bg-salmon" />
             </span>
           </h1>
           <p className="rise rise-3 mt-6 max-w-[460px] text-lg italic leading-[1.45] sm:text-[21px]">
-            Say goodbye to the what-ifs. A Shellie is a bracelet with an NFC tag. Tap it with a phone and the info you chose to share shows up.
+            A little tap, a lot to share. Shellie is a bracelet with an NFC tag that makes connecting easier. Simply tap it with a phone, and the information, profiles, and links you&apos;ve chosen to share are ready to discover.
           </p>
           <div className="rise rise-4 mt-8 flex flex-wrap gap-3 sm:mt-9 sm:gap-3.5">
             <Link href="/shop" className="bubbly inline-flex h-14 flex-[1_1_auto] items-center justify-center rounded-[20px] bg-navy px-7 text-lg sm:h-16 sm:flex-none sm:px-9 sm:text-[19px] font-semibold text-sky no-underline">
@@ -73,9 +60,22 @@ export default async function Home() {
 
         <div className="rise rise-3 relative flex min-w-0 flex-[1_1_440px] justify-center">
           <div className="relative aspect-square w-full max-w-[520px] overflow-hidden rounded-[32px] bg-salmon sm:rounded-[40px]">
-            <div aria-hidden className="float-slow absolute -left-[120px] -top-[90px] h-[380px] w-[380px] rounded-full border-[36px] border-[#FF8A87]" />
-            <div aria-hidden className="float-late absolute -bottom-10 -right-[110px] h-[300px] w-[300px] rounded-full border-[36px] border-[#FF8A87]" />
-            <Bracelet hex="#C9973A" label="Classic Shellie bracelet with an NFC tag" className="swing absolute left-[8%] top-[10%] w-[84%]" />
+            {featured?.image ? (
+              <Image
+                src={featured.image}
+                alt={`${featured.name} Shellie bracelet with an NFC tag`}
+                fill
+                priority
+                sizes="(max-width: 640px) 100vw, 520px"
+                className="object-cover"
+              />
+            ) : (
+              <>
+                <div aria-hidden className="float-slow absolute -left-[120px] -top-[90px] h-[380px] w-[380px] rounded-full border-[36px] border-[#FF8A87]" />
+                <div aria-hidden className="float-late absolute -bottom-10 -right-[110px] h-[300px] w-[300px] rounded-full border-[36px] border-[#FF8A87]" />
+                <Bracelet hex="#C9973A" label="Shellie bracelet with an NFC tag" className="swing absolute left-[8%] top-[10%] w-[84%]" />
+              </>
+            )}
             <div className="bob absolute bottom-[6%] right-[5%] flex w-[78%] items-center gap-3 rounded-3xl bg-white px-4 py-3.5 sm:bottom-[7%] sm:right-[6%] sm:w-[62%] sm:gap-3.5 sm:px-5 sm:py-[18px] shadow-[0_18px_40px_rgba(77,5,5,0.18)]">
               <div className="relative flex h-[52px] w-[52px] flex-none items-center justify-center rounded-full bg-red">
                 <span aria-hidden className="ripple absolute inset-0 rounded-full border-2 border-red" />
@@ -106,29 +106,6 @@ export default async function Home() {
             </div>
             </div>
           ))}
-        </div>
-
-        {/* You choose what gets shared */}
-        <div className="reveal mt-12 flex flex-wrap items-center gap-8 overflow-hidden rounded-[32px] bg-sky p-[clamp(22px,5vw,72px)] sm:mt-16 sm:gap-14 sm:rounded-[48px]">
-          <div className="min-w-0 flex-[1_1_min(380px,100%)]">
-            <h2 className="font-display text-[clamp(36px,4.6vw,56px)] font-extrabold leading-none tracking-[-0.03em]">You choose what gets shared.</h2>
-            <p className="mt-[18px] max-w-[460px] text-lg leading-[1.55] text-muted">
-              Every field has its own switch. Share just a phone number, or add an address and socials. Change it any time and the bracelet updates straight away.
-            </p>
-          </div>
-          <div className="flex min-w-0 flex-[1_1_min(380px,100%)] flex-col gap-3 rounded-[24px] bg-periwinkle p-4 sm:rounded-[32px] sm:p-7">
-            {PREVIEW_FIELDS.map((f) => (
-              <div key={f.label} className="flex items-center justify-between gap-3 rounded-2xl bg-[#CFE0FB] px-[18px] py-3.5">
-                <span>
-                  <span className="block text-[13px] font-bold">{f.label}</span>
-                  <span className="text-[17px]">{f.value}</span>
-                </span>
-                <span aria-hidden className={`relative h-[30px] w-14 flex-none rounded-full border-[3px] border-ink ${f.on ? "bg-ink" : ""} ${f.demo ? "toggle-demo-track" : ""}`}>
-                  <span className={`absolute top-[3px] h-[18px] w-[18px] rounded-full ${f.on ? "right-[3px] bg-white" : "left-[3px] bg-ink"} ${f.demo ? "toggle-demo-knob" : ""}`} />
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -168,12 +145,12 @@ export default async function Home() {
           </h2>
           <p className="mt-[22px] text-lg italic sm:text-xl">Shellie, it&apos;s what you deserve!</p>
           <Link href="/shop" className="bubbly mt-8 inline-flex h-14 items-center rounded-[20px] bg-maroon px-8 text-lg sm:h-16 sm:px-10 sm:text-[19px] font-semibold text-white no-underline">
-            Set up your Shellie!
+            Build your Shellie collection
           </Link>
         </div>
         <div aria-hidden className="relative mx-auto mt-12 h-[150px] max-w-[400px] overflow-hidden sm:mt-[70px] sm:h-[230px] sm:max-w-[620px]">
           <div className="peek">
-            <Crab color="#C40F0B" className="crab-wave bob block w-full" />
+            <Mascot className="bob block w-full" />
           </div>
         </div>
       </section>

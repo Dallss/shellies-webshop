@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bracelet, Crab } from "@/components/art";
+import { Bracelet, Mascot, Wordmark } from "@/components/art";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TAB_BAR_SPACE } from "@/components/TabBar";
 import { listPosts, listProducts } from "@/lib/db";
@@ -67,7 +67,7 @@ export default async function NewsPage() {
               @perle.and.company →
             </a>
             <div aria-hidden className="absolute bottom-0 left-7 h-[72px] w-[150px] overflow-hidden">
-              <Crab color="#fff" className="bob block w-[150px]" />
+              <Mascot className="bob block w-[150px]" />
             </div>
           </article>
         </div>
@@ -75,8 +75,8 @@ export default async function NewsPage() {
 
       <footer className={`bg-ink px-5 pt-9 text-sky sm:px-6 md:pb-9 ${TAB_BAR_SPACE}`}>
         <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-3 text-[15px]">
-          <span className="font-display text-xl font-extrabold text-white">Perle &amp; Co.</span>
-          <span>A little closer to peace of mind.</span>
+          <Wordmark light className="h-[20px]" />
+          <span>A little closer to everyone.</span>
         </div>
       </footer>
     </div>

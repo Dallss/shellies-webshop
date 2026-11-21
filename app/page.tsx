@@ -4,7 +4,7 @@ import { Bracelet, Mascot, NfcIcon } from "@/components/art";
 import { ProductPhoto } from "@/components/ProductPhoto";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { BubbleField } from "@/components/BubbleField";
-import { listProducts } from "@/lib/db";
+import { getHeroImage, listProducts } from "@/lib/db";
 
 const STEPS = [
   { n: 1, title: "Set up your Shellie", body: "Add a name, a contact number and anything else you want a helper to know.", card: "bg-white", badge: "bg-sky text-navy", text: "text-muted" },
@@ -15,9 +15,14 @@ const STEPS = [
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const products = await listProducts({ onlyShown: true });
-  // The hero features the first listing that has a photo (reorder listings in the admin to change it).
+  const [products, heroUpload] = await Promise.all([listProducts({ onlyShown: true }), getHeroImage()]);
+  // The hero shows the photo uploaded in Admin → Homepage, or else the first listing that has a photo.
   const featured = products.find((p) => p.image);
+  const hero = heroUpload
+    ? { src: heroUpload, alt: "A Shellie bracelet with an NFC tag" }
+    : featured?.image
+      ? { src: featured.image, alt: `${featured.name} Shellie bracelet with an NFC tag` }
+      : null;
   return (
     <div className="relative overflow-hidden">
       <SiteHeader current="/" />
@@ -60,10 +65,10 @@ export default async function Home() {
 
         <div className="rise rise-3 relative flex min-w-0 flex-[1_1_440px] justify-center">
           <div className="relative aspect-square w-full max-w-[520px] overflow-hidden rounded-[32px] bg-salmon sm:rounded-[40px]">
-            {featured?.image ? (
+            {hero ? (
               <Image
-                src={featured.image}
-                alt={`${featured.name} Shellie bracelet with an NFC tag`}
+                src={hero.src}
+                alt={hero.alt}
                 fill
                 priority
                 sizes="(max-width: 640px) 100vw, 520px"

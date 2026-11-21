@@ -97,6 +97,25 @@ export async function removeProductPhotoAction(id: string) {
   return p;
 }
 
+// ---------- homepage ----------
+
+export async function setHeroPhotoAction(form: FormData) {
+  await requireAdmin();
+  const file = form.get("photo");
+  if (!(file instanceof File)) throw new Error("No photo");
+  if (!PHOTO_TYPES.includes(file.type)) throw new Error("Use a JPG, PNG or WebP photo.");
+  if (file.size > MAX_PHOTO_BYTES) throw new Error("That photo is over 4 MB.");
+  const url = await db.setHeroImage(file);
+  refreshShop();
+  return url;
+}
+
+export async function removeHeroPhotoAction() {
+  await requireAdmin();
+  await db.removeHeroImage();
+  refreshShop();
+}
+
 // ---------- posts ----------
 
 export async function savePostAction(input: { id?: string; title: string; category: PostCategory; body: string; status: "published" | "draft" }) {

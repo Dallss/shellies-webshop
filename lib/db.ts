@@ -113,6 +113,63 @@ export async function uploadProductPhoto(productId: string, file: File) {
   return `${BASE}/storage/v1/object/public/${PHOTO_BUCKET}/${path}`;
 }
 
+// ---------- homepage hero photo ----------
+// Kept as a file in the photo bucket (site/hero-<time>.<ext>) rather than a table row: the newest
+// file is the current photo, and replacing it removes the older ones.
+
+const HERO_DIR = "site";
+
+async function listHeroFiles(): Promise<string[]> {
+  const res = await fetch(`${BASE}/storage/v1/object/list/${PHOTO_BUCKET}`, {
+    method: "POST",
+    cache: "no-store",
+    headers: headers({ "Content-Type": "application/json" }),
+    body: JSON.stringify({ prefix: HERO_DIR, search: "hero-", limit: 20, sortBy: { column: "created_at", order: "desc" } }),
+  });
+  if (!res.ok) throw new DbError(`Couldn't list homepage photos (${res.status})`);
+  const rows = (await res.json()) as { name: string; id: string | null }[];
+  return rows.filter((r) => r.id && r.name.startsWith("hero-")).map((r) => `${HERO_DIR}/${r.name}`);
+}
+
+async function deleteObjects(paths: string[]) {
+  if (!paths.length) return;
+  await fetch(`${BASE}/storage/v1/object/${PHOTO_BUCKET}`, {
+    method: "DELETE",
+    headers: headers({ "Content-Type": "application/json" }),
+    body: JSON.stringify({ prefixes: paths }),
+  }).catch(() => {});
+}
+
+/** The uploaded homepage hero photo, or null when none is set (or storage can't be reached). */
+export async function getHeroImage(): Promise<string | null> {
+  try {
+    const [newest] = await listHeroFiles();
+    return newest ? `${BASE}/storage/v1/object/public/${PHOTO_BUCKET}/${newest}` : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Uploads a new homepage hero photo, removes the previous one, and returns the new public URL. */
+export async function setHeroImage(file: File) {
+  const before = await listHeroFiles().catch(() => [] as string[]);
+  const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+  const path = `${HERO_DIR}/hero-${Date.now().toString(36)}.${ext}`;
+  const res = await fetch(`${BASE}/storage/v1/object/${PHOTO_BUCKET}/${path}`, {
+    method: "POST",
+    headers: headers({ "Content-Type": file.type, "Cache-Control": "31536000" }),
+    body: Buffer.from(await file.arrayBuffer()),
+  });
+  if (!res.ok) throw new DbError(`Photo upload failed (${res.status})`);
+  await deleteObjects(before);
+  return `${BASE}/storage/v1/object/public/${PHOTO_BUCKET}/${path}`;
+}
+
+/** Removes the homepage hero photo, so the homepage falls back to a listing photo. */
+export async function removeHeroImage() {
+  await deleteObjects(await listHeroFiles());
+}
+
 /** Removes a photo we stored, if the URL points into our bucket. Failures are ignored. */
 export async function removeProductPhoto(url: string | null | undefined) {
   const prefix = `${BASE}/storage/v1/object/public/${PHOTO_BUCKET}/`;

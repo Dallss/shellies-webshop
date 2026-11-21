@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Mascot, Wordmark } from "@/components/art";
-import { OrdersIcon, PostIcon, TagIcon } from "@/components/icons";
+import { HomeIcon, OrdersIcon, PostIcon, TagIcon } from "@/components/icons";
 import { TabBar } from "@/components/TabBar";
 import { useAdmin } from "@/lib/admin-store";
 
 // A sidebar on wide screens. On phones it shrinks to a slim top bar, and the
-// three sections move to a tab bar at the bottom of the screen.
+// sections move to a tab bar at the bottom of the screen.
 
 export function AdminSidebar() {
   const path = usePathname();
@@ -18,6 +18,7 @@ export function AdminSidebar() {
     { href: "/admin/orders", label: "Orders", badge: fresh, icon: <OrdersIcon className="h-6 w-6" /> },
     { href: "/admin/listings", label: "Listings", badge: 0, icon: <TagIcon className="h-6 w-6" /> },
     { href: "/admin/posts", label: "Posts", badge: 0, icon: <PostIcon className="h-6 w-6" /> },
+    { href: "/admin/homepage", label: "Homepage", badge: 0, icon: <HomeIcon className="h-6 w-6" /> },
   ];
 
   return (
@@ -53,9 +54,6 @@ export function AdminSidebar() {
         })}
       </nav>
       <Link href="/news" className="hidden px-4 text-[15px] font-medium text-sky no-underline md:block">View public News page →</Link>
-      <div className="hidden rounded-[18px] bg-ink p-3.5 text-[13px] leading-normal text-sky-2 md:mt-auto md:block">
-        Sample data. Changes reset when the page reloads until the backend is connected.
-      </div>
       <TabBar
         label="Admin"
         tabs={items.map((n) => ({

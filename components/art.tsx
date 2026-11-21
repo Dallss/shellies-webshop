@@ -20,7 +20,7 @@ export function Mascot({ className = "", priority = false, deep = false }: { cla
   );
 }
 
-/** The "Perle & Co." brand mark. Black by default; `light` turns it white for dark backgrounds. */
+/** The "Perle & Co." brand mark. Ink navy (#0b2a5b) by default; `light` turns it white for dark backgrounds. */
 export function Wordmark({ className = "", light = false }: { className?: string; light?: boolean }) {
   return (
     <Image

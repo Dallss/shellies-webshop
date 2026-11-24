@@ -159,7 +159,7 @@ export default async function Home() {
             Build your Shellie collection
           </Link>
         </div>
-        <div aria-hidden className="relative mx-auto mt-12 h-[150px] max-w-[400px] overflow-hidden sm:mt-[70px] sm:h-[230px] sm:max-w-[620px]">
+        <div aria-hidden className="relative mx-auto mt-9 h-[162px] max-w-[400px] overflow-hidden pt-3 sm:mt-[58px] sm:h-[242px] sm:max-w-[620px]">
           <div className="peek">
             <Mascot deep className="bob block w-full" />
           </div>

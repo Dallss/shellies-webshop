@@ -10,7 +10,7 @@ import { getHeroImage, listProducts } from "@/lib/db";
 const STEPS = [
   { n: 1, title: "Set up your Shellie", body: "Add a name, a contact number and anything else you want a helper to know.", card: "bg-white", badge: "bg-sky text-navy", text: "text-muted" },
   { n: 2, title: "Someone taps it", body: "A teacher, a guard or a kind stranger holds their phone to the shell-shaped tag.", card: "bg-white", badge: "bg-coral text-white", text: "text-muted" },
-  { n: 3, title: "They reach you", body: "Your shared info opens in their browser, with one tap to call you.", card: "bg-navy text-white", badge: "bg-white text-navy", text: "text-sky" },
+  { n: 3, title: "They reach you", body: "Your shared info opens in their phone, with one tap to connect with you.", card: "bg-navy text-white", badge: "bg-white text-navy", text: "text-sky" },
 ];
 
 export const dynamic = "force-dynamic";
@@ -152,7 +152,7 @@ export default async function Home() {
             Build your Shellie collection
           </Link>
         </div>
-        <div aria-hidden className="relative mx-auto mt-12 h-[150px] max-w-[400px] overflow-hidden sm:mt-[70px] sm:h-[230px] sm:max-w-[620px]">
+        <div aria-hidden className="relative mx-auto mt-9 h-[162px] max-w-[400px] overflow-hidden pt-3 sm:mt-[58px] sm:h-[242px] sm:max-w-[620px]">
           <div className="peek">
             <Mascot className="bob block w-full" />
           </div>
